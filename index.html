@@ -3,36 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HUIT Hệ Quản Trị Cơ Sở Dữ Liệu</title>
+  <title>HUIT — Tài liệu Hệ Quản Trị Cơ Sở Dữ Liệu</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      line-height: 1.6;
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --primary:#0f172a; --accent:#0284c7; --muted:#64748b;
     }
-    h1 {
-      color: #333;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    a {
-      color: #0066cc;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
+    body{font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background:var(--bg);color:#1f2937;margin:0;padding:30px}
+    .container{max-width:980px;margin:0 auto;background:var(--card);padding:32px;border-radius:12px;box-shadow:0 6px 20px rgba(15,23,42,0.06)}
+    .header{border-bottom:3px double var(--accent);padding-bottom:14px;margin-bottom:22px}
+    h1{font-size:22px;color:var(--primary);margin:0}
+    .meta{color:var(--muted);margin-top:6px;font-size:14px}
+    .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:20px}
+    .card{background:#f1f5f9;border:1px solid #e2e8f0;padding:12px;border-radius:8px}
+    .card a{color:var(--accent);font-weight:600;text-decoration:none}
+    .card p{margin:6px 0 0;font-size:13px;color:#334155}
+    .footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:right}
   </style>
 </head>
 <body>
-  <h1>HUIT Hệ Quản Trị Cơ Sở Dữ Liệu</h1>
+  <div class="container">
+    <div class="header">
+      <h1>HUIT — Hệ Quản Trị Cơ Sở Dữ Liệu</h1>
+      <div class="meta">Trường: Đại học Công Thương TP.HCM (HUIT) • Môn: Hệ Quản Trị Cơ Sở Dữ Liệu</div>
+    </div>
 
-  <ul>
-    <li><a href="BaiTap5_1_TruyXuatDongThoi.html">Bài tập 5.1 - Truy xuất đồng thời</a></li>
-    <li><a href="BaiTap5_2_KhaTuanTuXungDot.html">Bài tập 5.2 - Khả tuần tự xung đột</a></li>
-    <li><a href="De1KiemTraChuong123.html">Đề 1 kiểm tra chương 1-2-3</a></li>
-    <li><a href="phieuthuchanh_thhqtcsdl.html">Phiếu thực hành THHQT CSDL</a></li>
-  </ul>
+    <div class="section">
+      <h2 style="margin:0;color:var(--primary);font-size:16px">1. Kiểm tra</h2>
+      <div class="links" style="margin-top:12px">
+        <div class="card">
+          <a href="De1KiemTraChuong123.html">Đề kiểm tra 1 — Chương 1-2-3</a>
+          <p>Đề 1: Đề kiểm tra chương 1,2,3 (câu lý thuyết & bài tập).</p>
+        </div>
+        <div class="card">
+          <a href="De2KiemTraChuong123.html">Đề kiểm tra 2 — Chương 1-2-3</a>
+          <p>Đề 2: Đề thi thay thế/đối chiếu cho cùng chương.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 style="margin:20px 0 0 0;color:var(--primary);font-size:16px">2. Giải bài tập</h2>
+      <div class="links" style="margin-top:12px">
+        <div class="card">
+          <a href="BaiTap5_1_TruyXuatDongThoi.html">Bài tập 5.1 — Truy xuất đồng thời</a>
+          <p>Đồ thị trình tự, xung đột đọc/ghi.</p>
+        </div>
+        <div class="card">
+          <a href="BaiTap5_2_KhaTuanTuXungDot.html">Bài tập 5.2 — Khả tuần tự xung đột</a>
+          <p>Phân tích đồ thị trình tự và kết luận khả tuần tự.</p>
+        </div>
+        <div class="card">
+          <a href="BaiTap5_3_KhaTuanTuView_Polygraph.html">Bài tập 5.3 — Khả tuần tự View / Polygraph</a>
+          <p>Ví dụ về view và kiểm tra tính tuần tự.</p>
+        </div>
+        <div class="card">
+          <a href="BaiTap5_4_IsolationLevels_SQLServer.html">Bài tập 5.4 — Isolation Levels (SQL Server)</a>
+          <p>Minh họa các mức cô lập và ví dụ hình minh họa.</p>
+        </div>
+        <div class="card">
+          <a href="BaiTap5_5_QuanLyBanHang_Solution.html">Bài tập 5.5 — Quản lý bán hàng (Solution)</a>
+          <p>Stored procedures & giải pháp xử lý tranh chấp đồng thời.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 style="margin:20px 0 0 0;color:var(--primary);font-size:16px">3. Phiếu thực hành</h2>
+      <div class="links" style="margin-top:12px">
+        <div class="card">
+          <a href="phieuthuchanh_thhqtcsdl.html">Phiếu thực hành THHQT CSDL</a>
+          <p>Tài liệu thực hành môn học với hướng dẫn từng bước.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Nếu cần, tôi có thể sắp xếp lại thứ tự hoặc thêm mô tả chi tiết cho từng file.</div>
+  </div>
 </body>
 </html>
