@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=device-width, initial-scale=1.0">
+    <title>Lời giải Bài tập 5.1 - Hệ Quản Trị Cơ Sở Dữ Liệu</title>
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --accent-color: #ef4444;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-dark: #0f172a;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .header {
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--text-dark);
+            font-size: 28px;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--secondary-color);
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .exercise-title {
+            background-color: #eff6ff;
+            border-left: 5px solid var(--secondary-color);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+        }
+
+        .case-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .case-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .case-header {
+            background-color: #f1f5f9;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .case-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 10px;
+            text-transform: uppercase;
+        }
+
+        .case-body {
+            padding: 20px;
+        }
+
+        .timeline {
+            margin-bottom: 15px;
+            padding-left: 20px;
+            border-left: 2px dashed #cbd5e1;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .timeline-item::before {
+            content: "•";
+            color: var(--secondary-color);
+            position: absolute;
+            left: -26px;
+            font-size: 20px;
+            top: -4px;
+        }
+
+        .result-box {
+            background-color: #fff7ed;
+            border: 1px solid #ffedd5;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .result-box strong {
+            color: #c2410c;
+        }
+
+        .conclusion-box {
+            background-color: #fef2f2;
+            border: 1px solid #fee2e2;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .conclusion-box strong {
+            color: var(--accent-color);
+        }
+
+        .code-inline {
+            background-color: #f1f5f9;
+            color: #db2777;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 14px;
+        }
+
+        .exercise-image {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto 30px auto;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: #94a3b8;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Hệ Quản Trị Cơ Sở Dữ Liệu</h1>
+        <p class="subtitle">Lời Giải Chi Tiết Bài Tập Giao Tác & Truy Xuất Đồng Thời</p>
+    </div>
+
+    <div class="exercise-title">
+        Bài tập 5.1: Cho biết các trường hợp sau xảy ra vấn đề gì của truy xuất đồng thời?
+    </div>
+
+    <img src="Bai5_1.png" alt="Bài 5.1" class="exercise-image">
+
+    <!-- Câu a -->
+    <div class="case-card">
+        <div class="case-header">
+            <span class="case-badge">Trường hợp a</span> Mất dữ liệu đã cập nhật
+        </div>
+        <div class="case-body">
+            <div class="timeline">
+                <div class="timeline-item">Giao tác <span class="code-inline">T1</span> đọc giá trị ban đầu của mục dữ liệu <span class="code-inline">A</span>.</div>
+                <div class="timeline-item">Giao tác <span class="code-inline">T2</span> cũng vào đọc mục dữ liệu <span class="code-inline">A</span> và nhận cùng một giá trị như <span class="code-inline">T1</span> vừa đọc.</div>
+                <div class="timeline-item">Giao tác <span class="code-inline">T1</span> thực hiện tính toán biến đổi dữ liệu (<span class="code-inline">A = A * 2</span>) rồi thực hiện lệnh <span class="code-inline">Write A</span> để ghi nhận giá trị mới lên hệ thống.</div>
+                <div class="timeline-item">Ngay sau đó, giao tác <span class="code-inline">T2</span> thực hiện phép tính dựa trên giá trị cũ đã đọc trước đó (<span class="code-inline">A = A + 40</span>) rồi thực hiện lệnh <span class="code-inline">Write A</span> và tiến hành <span class="code-inline">Commit Tran</span>.</div>
+            </div>
+            <div class="result-box">
+                <strong>Hệ quả:</strong> Hành động ghi dữ liệu cuối cùng của giao tác <span class="code-inline">T2</span> đã hoàn toàn ghi đè và làm mất đi kết quả cập nhật dữ liệu hợp lệ trước đó của giao tác <span class="code-inline">T1</span>.
+            </div>
+            <div class="conclusion-box">
+                <strong>Kết luận:</strong> Xảy ra vấn đề <strong>Mất dữ liệu đã cập nhật (Lost Update)</strong>.
+            </div>
+        </div>
+    </div>
+
+    <!-- Câu b -->
+    <div class="case-card">
+        <div class="case-header">
+            <span class="case-badge">Trường hợp b</span> Đọc dữ liệu rác
+        </div>
+        <div class="case-body">
+            <div class="timeline">
+                <div class="timeline-item">Giao tác <span class="code-inline">T1</span> tiến hành đọc mục dữ liệu <span class="code-inline">A</span>, thực hiện thay đổi giá trị (<span class="code-inline">A = A * 2</span>) và gọi lệnh <span class="code-inline">Write A</span> để lưu tạm thời <em>(lúc này T1 vẫn chưa Commit)</em>.</div>
+                <div class="timeline-item">Giao tác <span class="code-inline">T2</span> bắt đầu thực hiện, vào đọc mục dữ liệu <span class="code-inline">A</span> (<span class="code-inline">Read A</span>) và nhận được giá trị mới thay đổi do <span class="code-inline">T1</span> vừa viết. <span class="code-inline">T2</span> đem giá trị này đi in ra màn hình (<span class="code-inline">print A</span>) rồi kết thúc bằng lệnh <span class="code-inline">Commit Tran</span>.</div>
+                <div class="timeline-item">Sau khi <span class="code-inline">T2</span> đã kết thúc, giao tác <span class="code-inline">T1</span> gặp sự cố hoặc chủ động gọi lệnh quay lui hệ thống <span class="code-inline">Rollback Tran</span>. Lúc này, mục dữ liệu <span class="code-inline">A</span> bị trả ngược về giá trị gốc ban đầu.</div>
+            </div>
+            <div class="result-box">
+                <strong>Hệ quả:</strong> Giá trị dữ liệu mà giao tác <span class="code-inline">T2</span> đã đọc, sử dụng và kết xuất thực chất không hề tồn tại trên hệ thống (vì dữ liệu tạm thời của <span class="code-inline">T1</span> đã bị hủy bỏ).
+            </div>
+            <div class="conclusion-box">
+                <strong>Kết luận:</strong> Xảy ra vấn đề <strong>Đọc dữ liệu rác / Đọc dữ liệu chưa commit (Dirty Read)</strong>.
+            </div>
+        </div>
+    </div>
+
+    <!-- Câu c -->
+    <div class="case-card">
+        <div class="case-header">
+            <span class="case-badge">Trường hợp c</span> Không thể đọc lại
+        </div>
+        <div class="case-body">
+            <div class="timeline">
+                <div class="timeline-item">Giao tác <span class="code-inline">T1</span> thực hiện lệnh <span class="code-inline">Read A</span> lần thứ nhất để kiểm tra hoặc xử lý dữ liệu.</div>
+                <div class="timeline-item">Trong khi giao tác <span class="code-inline">T1</span> vẫn đang chạy (chưa thực hiện Commit), giao tác <span class="code-inline">T2</span> xen vào thực hiện thay đổi giá trị (<span class="code-inline">A = A * 3</span>), tiến hành <span class="code-inline">Write A</span> và thực hiện lệnh <span class="code-inline">Commit Tran</span> thành công.</div>
+                <div class="timeline-item">Giao tác <span class="code-inline">T1</span> tiếp tục thực hiện lệnh <span class="code-inline">Read A</span> lần thứ hai để hoàn tất quy trình của mình. Lúc này, giá trị của <span class="code-inline">A</span> mà <span class="code-inline">T1</span> nhận được đã bị thay đổi hoàn toàn so với lần đọc đầu tiên.</div>
+            </div>
+            <div class="result-box">
+                <strong>Hệ quả:</strong> Giao tác <span class="code-inline">T1</span> không thể bảo toàn hoặc đọc lại được giá trị dữ liệu nhất quán xuyên suốt trong cùng một phiên giao tác làm việc.
+            </div>
+            <div class="conclusion-box">
+                <strong>Kết luận:</strong> Xảy ra vấn đề <strong>Không thể đọc lại dữ liệu (Unrepeatable Read)</strong>.
+            </div>
+        </div>
+    </div>
+
+    <!-- Câu d -->
+    <div class="case-card">
+        <div class="case-header">
+            <span class="case-badge">Trường hợp d</span> Bóng ma dữ liệu
+        </div>
+        <div class="case-body">
+            <div class="timeline">
+                <div class="timeline-item">Giao tác <span class="code-inline">T1</span> thực hiện lệnh truy vấn đọc một tập hợp các dòng dữ liệu thỏa mãn điều kiện nhất định, cụ thể là thống kê toàn bộ bảng khách hàng (<span class="code-inline">Select * From KH</span>) lần thứ nhất.</div>
+                <div class="timeline-item">Giao tác <span class="code-inline">T2</span> xuất hiện song song, thực hiện chèn thêm một dòng dữ liệu (bản ghi) mới vào bảng đó (<span class="code-inline">Insert Into KH Values(...)</span>) và gọi <span class="code-inline">Commit Tran</span> hoàn tất lưu trữ.</div>
+                <div class="timeline-item">Giao tác <span class="code-inline">T1</span> thực hiện lại câu lệnh truy vấn tập hợp dữ liệu đó một lần nữa (<span class="code-inline">Select * From KH</span>). Kết quả tập hợp trả về lúc này chứa nhiều bản ghi hơn so với lần đọc đầu tiên.</div>
+            </div>
+            <div class="result-box">
+                <strong>Hệ quả:</strong> Tập hợp kết quả dữ liệu mà giao tác <span class="code-inline">T1</span> đang quản lý bị thay đổi số lượng dòng một cách bất ngờ do hành động chèn dữ liệu từ giao tác khác.
+            </div>
+            <div class="conclusion-box">
+                <strong>Kết luận:</strong> Xảy ra vấn đề <strong>Bóng ma dữ liệu (Phantom Read)</strong>.
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Bộ môn Hệ thống thông tin - Khoa CNTT - Trường Đại học Công Thương TP.HCM (HUIT)
+    </footer>
+</div>
+
+</body>
+</html>
