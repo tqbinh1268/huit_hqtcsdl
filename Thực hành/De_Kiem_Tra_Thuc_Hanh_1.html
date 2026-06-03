@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề Kiểm Tra Thực Hành Số 1 - HUIT TH HQT CSDL</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #fcfcfc;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #003366;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .header-info {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .header-info p {
+            margin: 5px 0;
+            font-weight: 500;
+        }
+        h2 {
+            color: #004080;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #222;
+            margin-top: 25px;
+        }
+        p {
+            margin-bottom: 10px;
+        }
+        ul, ol {
+            margin-top: 5px;
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .code {
+            font-family: Consolas, "Courier New", monospace;
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d14;
+            font-size: 0.95em;
+        }
+        .pts {
+            font-weight: bold;
+            color: #c0392b;
+        }
+        .note {
+            font-style: italic;
+            color: #666;
+            background-color: #fff9e6;
+            padding: 5px 10px;
+            border-left: 3px solid #f1c40f;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .rubric {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-left: 4px solid #0059b3;
+            padding: 20px;
+            margin-top: 40px;
+            border-radius: 4px;
+        }
+        .rubric h3 {
+            margin-top: 0;
+            color: #004080;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ĐỀ KIỂM TRA THỰC HÀNH SỐ 1</h1>
+        <div class="header-info">
+            <p><strong>Môn học:</strong> Thực hành Hệ quản trị Cơ sở dữ liệu</p>
+            <p><strong>Thời gian làm bài:</strong> 60 phút (Thực hành trực tiếp trên SQL Server)</p>
+            <p><strong>Chuẩn đầu ra đánh giá:</strong> CLO1, CLO2</p>
+        </div>
+        <p><a href="De_Kiem_Tra_Thuc_Hanh_1.pdf" download style="display:inline-block;margin-bottom:20px;padding:10px 16px;background:#004080;color:#fff;border-radius:6px;text-decoration:none;font-weight:700;">Tải xuống PDF đề thi</a></p>
+
+        <h2>MÔ TẢ BÀI TOÁN: QUẢN LÝ ĐẶT PHÒNG KHÁCH SẠN</h2>
+        <p>Một khách sạn cần quản lý việc đặt phòng của khách hàng. Hệ thống cơ sở dữ liệu đơn giản gồm 3 bảng chính:</p>
+        <ul>
+            <li><span class="code">KhachHang(MaKH, TenKH, SoDienThoai, LoaiKH)</span></li>
+            <li><span class="code">Phong(MaPhong, LoaiPhong, GiaTheoNgay, TrangThai)</span></li>
+            <li><span class="code">DatPhong(MaDat, MaKH, MaPhong, NgayNhan, NgayTra, TongTien)</span></li>
+        </ul>
+
+        <h2>PHẦN THỰC HÀNH T-SQL (10 ĐIỂM)</h2>
+
+        <h3>Câu 1: Tạo cơ sở dữ liệu, bảng, ràng buộc khóa và nhập liệu <span class="pts">(3.0 điểm - Chuẩn PLO3, CLO1)</span></h3>
+        <p>Anh/Chị hãy viết các câu lệnh T-SQL để thực hiện:</p>
+        <ol>
+            <li>Tạo cơ sở dữ liệu mang tên <span class="code">QL_DatPhong_KS</span>.</li>
+            <li>Tạo các bảng dữ liệu với các ràng buộc khóa chính (PRIMARY KEY), khóa ngoại (FOREIGN KEY) theo mô tả sau:
+                <ul>
+                    <li><span class="code">KhachHang</span>: Cột <span class="code">LoaiKH</span> chỉ được phép nhận một trong các giá trị: 'Vang', 'Bac', 'Dong'. Giá trị mặc định (DEFAULT) là 'Dong'.</li>
+                    <li><span class="code">Phong</span>: Cột <span class="code">GiaTheoNgay</span> phải lớn hơn 0 (CHECK). Cột <span class="code">TrangThai</span> chỉ nhận giá trị 'Trong' hoặc 'DaThue'.</li>
+                    <li><span class="code">DatPhong</span>: Cột <span class="code">NgayTra</span> phải lớn hơn hoặc bằng <span class="code">NgayNhan</span> (CHECK).</li>
+                </ul>
+            </li>
+            <li>Nhập dữ liệu mẫu vào mỗi bảng (ít nhất 3 dòng dữ liệu hợp lệ cho mỗi bảng, cột <span class="code">TongTien</span> tạm thời để trống hoặc bằng 0).</li>
+        </ol>
+
+        <h2>PHẦN THỦ TỤC - STORED PROCEDURE (2.0 Điểm)</h2>
+
+        <h3>Câu 2: Viết thủ tục thêm khách hàng mới <span class="pts">(1.0 điểm - Chuẩn PLO3, CLO1)</span></h3>
+        <p>Viết thủ tục <span class="code">sp_ThemKhachHang</span> nhận vào các tham số (Mã, Tên, SĐT, Loại). Kiểm tra nếu tham số Loại khách hàng truyền vào bị trống (NULL) thì tự động gán giá trị mặc định là 'Dong'. Sau đó thực hiện chèn dữ liệu vào bảng <span class="code">KhachHang</span>.</p>
+
+        <h3>Câu 3: Viết thủ tục thống kê doanh thu phòng <span class="pts">(1.0 điểm - Chuẩn PLO3, CLO1)</span></h3>
+        <p>Viết thủ tục <span class="code">sp_ThongKeDoanhThu</span> nhận vào tham số là <span class="code">LoaiPhong</span>. Hãy tính toán và in ra tổng doanh thu (tổng cột <span class="code">TongTien</span>) của loại phòng đó. Nếu loại phòng không tồn tại hoặc chưa phát sinh giao dịch, in ra thông báo "Không có dữ liệu".</p>
+
+        <h2>PHẦN HÀM - FUNCTION (2.0 Điểm)</h2>
+
+        <h3>Câu 4: Cài đặt hàm tính tiền phòng vô hướng <span class="pts">(1.0 điểm - Chuẩn PLO3, CLO1)</span></h3>
+        <p>Viết một hàm vô hướng (Scalar Function) có tên <span class="code">fn_TinhTienPhong</span> truyền vào <span class="code">MaDat</span> (Mã đặt phòng). Hàm thực hiện tính và trả về tiền phòng dự kiến theo công thức: <br>
+        <span class="code">Tiền phòng = (Số ngày thuê) * GiaTheoNgay</span><br>
+        <span class="note">Lưu ý: Số ngày thuê = NgayTra - NgayNhan. Nếu NgayNhan và NgayTra trùng nhau thì tính là 1 ngày (Sử dụng hàm DATEDIFF để tính).</span></p>
+
+        <h3>Câu 5: Cài đặt hàm xem lịch sử đặt phòng <span class="pts">(1.0 điểm - Chuẩn PLO3, CLO1)</span></h3>
+        <p>Viết một hàm trả về bảng (Table-Valued Function) có tên <span class="code">fn_LichSuDatPhong</span> nhận vào tham số <span class="code">MaKH</span>. Hàm trả về danh sách lịch sử đặt phòng của khách hàng này gồm các thông tin: MaPhong, LoaiPhong, NgayNhan, NgayTra.</p>
+
+        <h2>PHẦN CURSOR (2.0 Điểm)</h2>
+
+        <h3>Câu 6: Sử dụng Cursor duyệt danh sách phòng trống <span class="pts">(1.0 điểm - Chuẩn PLO3, CLO1)</span></h3>
+        <p>Sử dụng Cursor để duyệt qua danh sách các phòng đang có trạng thái <span class="code">TrangThai = 'Trong'</span>. Trong quá trình duyệt, hãy dùng lệnh <span class="code">PRINT</span> để in ra màn hình thông tin quảng cáo phòng theo định dạng: <br>
+        <em>"Phòng [MaPhong] - Loại: [LoaiPhong] hiện đang trống với giá ưu đãi chỉ [GiaTheoNgay] VNĐ/ngày!"</em></p>
+
+        <h3>Câu 7: Sử dụng Cursor cập nhật tổng tiền hàng loạt <span class="pts">(1.0 điểm - Chuẩn PLO3, CLO1)</span></h3>
+        <p>Viết một Cursor kết hợp với việc gọi hàm <span class="code">fn_TinhTienPhong</span> (đã viết ở Câu 4) để duyệt qua toàn bộ các dòng dữ liệu trong bảng <span class="code">DatPhong</span>. Thực hiện tính toán lại tiền phòng và cập nhật (<span class="code">UPDATE</span>) giá trị chính xác vào cột <span class="code">TongTien</span> tương ứng.</p>
+
+        <h2>PHẦN XỬ LÝ VẤN ĐỀ - TRIGGER (1.0 Điểm)</h2>
+
+        <h3>Câu 8: Cài đặt Trigger kiểm soát trạng thái đặt phòng <span class="pts">(1.0 điểm - Chuẩn PLO4, CLO2)</span></h3>
+        <p>Viết một Trigger cho sự kiện <span class="code">INSERT</span> trên bảng <span class="code">DatPhong</span>. Khi một bản ghi đặt phòng mới được thêm vào, hệ thống phải tự động kiểm tra trạng thái phòng:</p>
+        <ul>
+            <li>Nếu phòng đó đang có <span class="code">TrangThai = 'DaThue'</span>, thực hiện báo lỗi bằng lệnh <span class="code">RAISERROR</span> và hủy bỏ thao tác (<span class="code">ROLLBACK TRANSACTION</span>).</li>
+            <li>Nếu hợp lệ, cho phép đặt phòng đồng thời tự động cập nhật lại trạng thái của phòng đó thành 'DaThue' trong bảng <span class="code">Phong</span>.</li>
+        </ul>
+
+        <div class="rubric">
+            <h3>HƯỚNG DẪN ĐÁNH GIÁ (Dành cho Giảng viên theo đúng Rubric K15):</h3>
+            <ul>
+                <li><strong>Mức 10 - 8.5 (Hoàn thành xuất sắc):</strong> Toàn bộ script chạy thông suốt từ đầu đến cuối, không lỗi cú pháp. Các câu lệnh gài cấu trúc logic (Hàm lồng Cursor, Trigger bắt ROLLBACK) hoạt động chính xác tuyệt đối.</li>
+                <li><strong>Mức 8.4 - 7.0 (Khá/Tốt):</strong> Hoàn thành từ 60-80% khối lượng đề thi. Có thể mắc lỗi logic nhỏ ở các phần nâng cao như xử lý trùng ngày hoặc viết thiếu điều kiện WHERE trong thủ tục.</li>
+                <li><strong>Mức 6.9 - 5.5 (Trung bình):</strong> Thực hiện tốt phần khởi tạo CSDL, ràng buộc dữ liệu. Viết được khung cấu trúc cơ bản của Stored Procedure, Function nhưng chưa xử lý trọn vẹn logic bài toán.</li>
+                <li><strong>Mức &lt; 5.5 (Không đạt/Yếu):</strong> Sai sót ngay từ bước tạo bảng dữ liệu, thiếu khóa chính/khóa ngoại dẫn đến các câu sau không thực thi được; viết sai cú pháp cơ bản của Cursor và Trigger.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
