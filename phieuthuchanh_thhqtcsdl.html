@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sổ Tay Hướng Dẫn, Phiếu Thực Hành & Đề Kiểm Tra Đánh Giá - Hệ Quản Trị CSDL</title>
+    <style>
+        :root {
+            --primary-color: #102a43;
+            --secondary-color: #334e68;
+            --accent-color: #ff7f11;
+            --hero-bg: #102a43;
+            --hero-surface: #14365d;
+            --text-color: #1f2937;
+            --bg-color: #eef2f7;
+            --surface: #ffffff;
+            --border-color: #d1d5db;
+            --code-bg: #f8fafc;
+            --sidebar-bg: #172b4d;
+            --sidebar-text: #e2e8f0;
+            --sidebar-muted: #a8b8d4;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            line-height: 1.7;
+            padding: 28px 16px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+        }
+
+
+        .brand-title {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--primary-color);
+        }
+
+        .brand-subtitle {
+            font-size: 12px;
+            color: var(--secondary-color);
+            margin-top: 6px;
+        }
+
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f3f64, #163f63);
+            border-radius: 28px;
+            padding: 32px 30px;
+            margin-bottom: 30px;
+            color: #ffffff;
+            box-shadow: 0 18px 38px rgba(16, 42, 67, 0.18);
+        }
+
+        .hero-card .hero-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 26px;
+        }
+
+        .hero-card .hero-top .brand-title {
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.94);
+            font-size: 13px;
+            letter-spacing: 0.16em;
+        }
+
+        .hero-card .hero-top .brand-subtitle {
+            color: rgba(255, 255, 255, 0.74);
+            text-align: right;
+            max-width: 440px;
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .hero-card .doc-title {
+            max-width: 820px;
+            font-size: 40px;
+            line-height: 1.05;
+            margin-bottom: 14px;
+        }
+
+        .hero-card .doc-subtitle {
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .hero-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.12);
+            margin: 0 0 24px;
+        }
+
+        .hero-text {
+            max-width: 760px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.82);
+            margin-bottom: 32px;
+            line-height: 1.8;
+        }
+
+        .hero-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(120px, 1fr));
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .hero-meta-grid div {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.72);
+        }
+
+        .hero-meta-grid strong {
+            color: #ffffff;
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .hero-meta-grid span {
+            display: inline-block;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .hero-card::after {
+            content: '';
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            top: -35px;
+            right: -35px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--accent-color);
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .hero-card .doc-title {
+            color: #ffffff;
+            margin: 0 0 10px 0;
+            font-size: 34px;
+            line-height: 1.05;
+            letter-spacing: 0.2px;
+            text-transform: none;
+        }
+
+        .hero-card .doc-subtitle {
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .hero-text {
+            max-width: 760px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.84);
+            margin-bottom: 26px;
+            line-height: 1.8;
+        }
+
+        .hero-meta-grid div {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.78);
+        }
+
+        .hero-meta-grid strong {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+
+        .hero-meta-grid {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+        }
+
+        .hero-card .doc-subtitle {
+            margin-bottom: 24px;
+        }
+
+        .layout {
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-radius: 20px;
+            padding: 28px 22px;
+            box-shadow: 0 18px 44px rgba(15, 23, 42, 0.12);
+            position: sticky;
+            top: 20px;
+            min-height: 380px;
+        }
+
+        .sidebar-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--sidebar-text);
+            margin-bottom: 18px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-links a,
+        .nav-sub-links a {
+            display: inline-flex;
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 14px;
+            line-height: 1.4;
+            transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a:focus,
+        .nav-sub-links a:hover,
+        .nav-sub-links a:focus,
+        .nav-links a.active,
+        .nav-sub-links a.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            transform: translateX(2px);
+        }
+
+        .nav-links a.active {
+            box-shadow: inset 3px 0 0 var(--accent-color);
+        }
+
+        .nav-group {
+            margin-top: 10px;
+        }
+
+        .nav-group-title {
+            display: block;
+            margin: 14px 0 6px;
+            font-size: 12px;
+            color: var(--sidebar-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .nav-sub-links {
+            margin-left: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .nav-sub-links a {
+            padding-left: 22px;
+            font-size: 13px;
+            color: var(--sidebar-muted);
+        }
+
+        .nav-sub-links a:hover,
+        .nav-sub-links a:focus {
+            color: var(--primary-color);
+        }
+
+        .menu-button,
+        .sidebar-close {
+            display: none;
+        }
+
+        #menu-toggle {
+            display: none;
+        }
+
+        .menu-button {
+            position: fixed;
+            left: 18px;
+            top: 18px;
+            z-index: 22;
+            background: var(--primary-color);
+            color: #ffffff;
+            border: none;
+            border-radius: 999px;
+            padding: 12px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-close {
+            position: absolute;
+            right: 18px;
+            top: 18px;
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 260px;
+                transform: translateX(-100%);
+                transition: transform 0.25s ease-in-out;
+                margin: 0;
+                padding-top: 72px;
+                height: 100vh;
+                overflow-y: auto;
+                z-index: 20;
+            }
+
+            #menu-toggle:checked ~ .sidebar {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                padding-top: 72px;
+            }
+
+            .menu-button,
+            .sidebar-close {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .sidebar-close {
+                position: absolute;
+                display: inline-flex;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            .sidebar {
+                width: 240px;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            .hero-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .hero-top .brand-subtitle {
+                text-align: left;
+            }
+
+            .hero-meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Header / Cover Style */
+        .header-container {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 18px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .institution {
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            color: var(--secondary-color);
+            letter-spacing: 1.5px;
+        }
+
+        .department {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-top: 5px;
+        }
+
+        .doc-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-align: center;
+            margin: 30px 0 8px 0;
+            letter-spacing: 0.2px;
+        }
+
+        .doc-subtitle {
+            font-size: 14px;
+            text-align: center;
+            color: var(--secondary-color);
+            margin-bottom: 24px;
+        }
+
+        .intro-text {
+            background-color: #f4f7fb;
+            border-left: 4px solid var(--accent-color);
+            padding: 18px 22px;
+            margin-bottom: 35px;
+            font-size: 15px;
+            text-align: justify;
+            border-radius: 0 10px 10px 0;
+        }
+
+        /* Headings */
+        h1 {
+            font-size: 18px;
+            color: #ffffff;
+            background-color: var(--primary-color);
+            padding: 10px 15px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        h2 {
+            font-size: 15px;
+            color: var(--secondary-color);
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 12px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-size: 14px;
+            color: #2d3748;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            font-size: 14.5px;
+        }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #4a5568;
+            padding: 15px;
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            font-size: 13px;
+            color: #1a202c;
+            overflow-x: auto;
+            white-space: pre;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        /* Lists and Questions */
+        ul, ol {
+            margin-bottom: 20px;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            text-align: justify;
+            font-size: 14.5px;
+        }
+
+        .question {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+
+        .q-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 14.5px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .q-desc ul {
+            margin-top: 5px;
+            margin-bottom: 0;
+        }
+
+        /* Callout Boxes */
+        .edge-case-box {
+            background-color: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 12px 18px;
+            margin: 12px 0;
+            font-size: 13.5px;
+            color: #2b6cb0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .edge-case-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Exam / Rubric Tables */
+        .exam-header {
+            border: 2px solid var(--primary-color);
+            padding: 20px;
+            margin-top: 25px;
+            margin-bottom: 25px;
+            background-color: #fcfcfc;
+            border-radius: 4px;
+        }
+
+        .exam-info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .exam-info-table td {
+            border: none !important;
+            padding: 4px 0 !important;
+            background: transparent !important;
+        }
+
+        table.rubric-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 13px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        table.rubric-table th {
+            background-color: #2d3748;
+            color: #ffffff;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        table.rubric-table td {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        table.rubric-table tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-danger {
+            color: #e53e3e;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <input type="checkbox" id="menu-toggle">
+    <label for="menu-toggle" class="menu-button">Menu</label>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <label for="menu-toggle" class="sidebar-close" aria-label="Đóng menu">✕</label>
+            <div class="sidebar-title">Mục Lục Tài Liệu</div>
+            <nav class="nav-links">
+                <a href="#phan-i">PHẦN I: Thiết lập CSDL</a>
+                <div class="nav-group">
+                    <span class="nav-group-title">PHẦN II: Phiếu thực hành</span>
+                    <div class="nav-sub-links">
+                        <a href="#phieu-1">Phiếu 1: Cấu trúc vật lý & View</a>
+                        <a href="#phieu-2">Phiếu 2: Stored Procedure & Function</a>
+                        <a href="#phieu-3">Phiếu 3: Trigger & Cursor</a>
+                        <a href="#phieu-4">Phiếu 4: Security & Quyền</a>
+                        <a href="#phieu-5">Phiếu 5: Backup & Restore</a>
+                        <a href="#phieu-6">Phiếu 6: Giao tác & Concurrency</a>
+                    </div>
+                </div>
+                <a href="#phan-iii">PHẦN III: Đề kiểm tra</a>
+                <div class="nav-group">
+                    <span class="nav-group-title">Đề kiểm tra</span>
+                    <div class="nav-sub-links">
+                        <a href="#dethi-1">Đề 1: Kỹ năng SQL nâng cao</a>
+                        <a href="#dethi-2">Đề 2: Trigger, Backup, Isolation</a>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="container">
+                <div class="hero-card">
+                    <div class="hero-top">
+                        <div>
+                            <div class="brand-title">HỆ QUẢN TRỊ CSDL - TÀI LIỆU THỰC HÀNH</div>
+                            <div class="brand-subtitle">Sổ Tay Hướng Dẫn | Phiếu Thực Hành | Đề Kiểm Tra</div>
+                        </div>
+                        <div class="brand-subtitle">Trường Đại học Công Thương TP.HCM • Khoa Công nghệ Thông tin</div>
+                    </div>
+                    <div class="hero-badge">TÀI LIỆU CHUYÊN NGHIỆP</div>
+                    <h1 class="doc-title">Sổ Tay Hướng Dẫn & Phiếu Thực Hành Hệ Quản Trị CSDL</h1>
+                    <div class="doc-subtitle">Học phần: Thực hành Hệ quản trị Cơ sở dữ liệu (0101005073)</div>
+                    <div class="hero-divider"></div>
+                    <p class="hero-text">Tổng hợp 03 thành phần nội dung: hệ thống dữ liệu mẫu, 06 phiếu thực hành theo tuần, và 02 đề kiểm tra đánh giá năng lực chuyên sâu.</p>
+                    <div class="hero-meta-grid">
+                        <div><strong>03</strong><span>Nội dung chính</span></div>
+                        <div><strong>06</strong><span>Phiếu thực hành</span></div>
+                        <div><strong>02</strong><span>Đề kiểm tra</span></div>
+                    </div>
+                </div>
+
+        <div class="intro-text">
+            <strong>Giới thiệu hệ thống tài liệu chuyên sâu:</strong> Trang HTML tổng hợp này tích hợp đồng bộ 03 thành phần cốt lõi cấu thành năng lực thực hành cho người học: 
+            (1) Kịch bản T-SQL khởi tạo hệ thống Cơ sở dữ liệu kiểm thử quy mô lớn <code>QL_SINHVIEN</code> với cấu trúc phân lớp phức tạp; 
+            (2) Chuỗi hệ thống 6 Phiếu bài tập thực hành chia khóa theo ngóc ngách logic kỹ thuật hàng tuần;
+            (3) Thiết kế 02 Đề thi kiểm tra định kỳ chuẩn mực được chuyển đổi theo cấu trúc biểu điểm ma trận và tiêu chí đánh giá phân loại Rubric ở cuối đề cương chi tiết của Khoa Công nghệ Thông tin.
+        </div>
+
+        <!-- PHẦN I -->
+        <h1 id="phan-i">PHẦN I: THIẾT LẬP CƠ SỞ DỮ LIỆU KIỂM THỬ (QL_SINHVIEN)</h1>
+        <p>
+            Sinh viên thực hiện sao chép toàn bộ đoạn script lệnh T-SQL dưới đây và chạy trên phần mềm SQL Server Management Studio (SSMS). Hệ thống dữ liệu này được xây dựng có chủ đích nhằm tái hiện các trạng thái dữ liệu đa chiều phục vụ cho các thuật toán gộp nhóm nâng cao, bẫy lỗi trigger, con trỏ cursor dữ liệu hàng dọc và quản lý tranh chấp đồng thời.
+        </p>
+
+        <pre>-- =========================================================================
+-- 1. TẠO CƠ SỞ DỮ LIỆU (DATABASE) VỚI CẤU HÌNH DUNG LƯỢNG VÀ FILE HỆ THỐNG
+-- =========================================================================
+USE master;
+GO
+
+IF EXISTS (SELECT * FROM sys.databases WHERE name = 'QL_SINHVIEN')
+BEGIN
+    ALTER DATABASE QL_SINHVIEN SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE QL_SINHVIEN;
+END
+GO
+
+CREATE DATABASE QL_SINHVIEN
+ON PRIMARY (
+    NAME = QLSV_PRIMARY,
+    FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\QLSV_PRIMARY.mdf',
+    SIZE = 20MB,
+    MAXSIZE = 100MB,
+    FILEGROWTH = 10%
+)
+LOG ON (
+    NAME = QLSV_LOG,
+    FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\QLSV_LOG.ldf',
+    SIZE = 10MB,
+    MAXSIZE = 50MB,
+    FILEGROWTH = 15%
+);
+GO
+
+USE QL_SINHVIEN;
+GO
+
+-- =========================================================================
+-- 2. TẠO CẤU TRÚC CÁC BẢNG (TABLES) VÀ CÁC RÀNG BUỘC TOÀN VẸN CHẶT CHẼ
+-- =========================================================================
+
+CREATE TABLE KHOA (
+    MAKHOA VARCHAR(10) NOT NULL,
+    TENKHOA NVARCHAR(50) NOT NULL,
+    CONSTRAINT PK_KHOA PRIMARY KEY (MAKHOA)
+);
+
+CREATE TABLE LOP (
+    MALOP VARCHAR(10) NOT NULL,
+    TENLOP NVARCHAR(50) NOT NULL,
+    SISO INT DEFAULT 0,
+    MAKHOA VARCHAR(10),
+    CONSTRAINT PK_LOP PRIMARY KEY (MALOP),
+    CONSTRAINT FK_LOP_KHOA FOREIGN KEY (MAKHOA) REFERENCES KHOA(MAKHOA),
+    CONSTRAINT CK_SISO CHECK (SISO >= 0)
+);
+
+CREATE TABLE SINHVIEN (
+    MASV VARCHAR(10) NOT NULL,
+    HOTEN NVARCHAR(50) NOT NULL,
+    NGSINH DATE,
+    DCHI NVARCHAR(100),
+    GIOITINH NVARCHAR(3),
+    MALOP VARCHAR(10),
+    DIEMTB DECIMAL(3,1) DEFAULT NULL,
+    XEPLOAI NVARCHAR(10) DEFAULT NULL,
+    CONSTRAINT PK_SINHVIEN PRIMARY KEY (MASV),
+    CONSTRAINT FK_SINHVIEN_LOP FOREIGN KEY (MALOP) REFERENCES LOP(MALOP),
+    CONSTRAINT CK_GIOITINH CHECK (GIOITINH IN (N'Nam', N'Nữ'))
+);
+
+CREATE TABLE MONHOC (
+    MAMH VARCHAR(10) NOT NULL,
+    TENMH NVARCHAR(50) NOT NULL,
+    SOTC INT NOT NULL,
+    BATBUOC BIT DEFAULT 1,
+    CONSTRAINT PK_MONHOC PRIMARY KEY (MAMH),
+    CONSTRAINT CK_SOTC CHECK (SOTC > 0)
+);
+
+CREATE TABLE KETQUA (
+    MASV VARCHAR(10) NOT NULL,
+    MAMH VARCHAR(10) NOT NULL,
+    HOCKY INT NOT NULL,
+    DIEMTHI DECIMAL(3,1),
+    CONSTRAINT PK_KETQUA PRIMARY KEY (MASV, MAMH, HOCKY),
+    CONSTRAINT FK_KETQUA_SINHVIEN FOREIGN KEY (MASV) REFERENCES SINHVIEN(MASV) ON DELETE CASCADE,
+    CONSTRAINT FK_KETQUA_MONHOC FOREIGN KEY (MAMH) REFERENCES MONHOC(MAMH),
+    CONSTRAINT CK_DIEMTHI CHECK (DIEMTHI BETWEEN 0 AND 10)
+);
+GO
+
+-- =========================================================================
+-- 3. NẠP HỆ THỐNG DỮ LIỆU KIỂM THỬ ĐA DẠNG (POPULATE DATA)
+-- =========================================================================
+
+INSERT INTO KHOA (MAKHOA, TENKHOA) VALUES 
+('CNTT', N'Công nghệ thông tin'),
+('CNTP', N'Công nghệ thực phẩm'),
+('KTTM', N'Kinh tế thương mại'),
+('NNA', N'Ngôn ngữ Anh');
+
+INSERT INTO LOP (MALOP, TENLOP, SISO, MAKHOA) VALUES 
+('24DHTH01', N'Đại học Tin học 01', 5, 'CNTT'),
+('24DHTH02', N'Đại học Tin học 02', 4, 'CNTT'),
+('24DHTP01', N'Đại học Thực phẩm 01', 3, 'CNTP'),
+('24DHQT01', N'Đại học Quản trị kinh doanh 01', 3, 'KTTM'),
+('24DHTA01', N'Đại học Tiếng Anh 01', 0, 'NNA');
+
+INSERT INTO SINHVIEN (MASV, HOTEN, NGSINH, DCHI, GIOITINH, MALOP) VALUES 
+('SV001', N'Nguyễn Văn An', '2005-03-12', N'TP Hồ Chí Minh', N'Nam', '24DHTH01'),
+('SV002', N'Trần Thị Bình', '2005-08-23', N'Hà Nội', N'Nữ', '24DHTH01'),
+('SV003', N'Lê Hoàng Cường', '2004-11-05', N'Đà Nẵng', N'Nam', '24DHTH01'),
+('SV004', N'Phạm Minh Đức', '2005-01-30', N'Cần Thơ', N'Nam', '24DHTH01'),
+('SV005', N'Vũ Thùy Dương', '2005-05-14', N'TP Hồ Chí Minh', N'Nữ', '24DHTH01'),
+('SV006', N'Đoàn Văn Hải', '2004-07-19', N'Đồng Nai', N'Nam', '24DHTH02'),
+('SV007', N'Hoàng Thị Ngọc', '2005-12-02', N'Bình Dương', N'Nữ', '24DHTH02'),
+('SV008', N'Nguyễn Tiến Long', '2005-09-10', N'Long An', N'Nam', '24DHTH02'),
+('SV009', N'Trần Bích Vân', '2005-04-25', N'TP Hồ Chí Minh', N'Nữ', '24DHTH02'),
+('SV010', N'Nguyễn Thị Mai', '2005-02-11', N'Tiền Giang', N'Nữ', '24DHTP01'),
+('SV011', N'Lê Văn Nam', '2004-06-30', N'Bến Tre', N'Nam', '24DHTP01'),
+('SV012', N'Phạm Hồng Phúc', '2005-10-15', N'Vĩnh Long', N'Nam', '24DHTP01'),
+('SV013', N'Nguyễn Quang Hải', '2005-01-01', N'Hà Nội', N'Nam', '24DHQT01'),
+('SV014', N'Đặng Thị Thảo', '2005-07-07', N'Quảng Nam', N'Nữ', '24DHQT01'),
+('SV015', N'Bùi Minh Tuấn', '2004-09-21', N'Thừa Thiên Huế', N'Nam', '24DHQT01');
+
+INSERT INTO MONHOC (MAMH, TENMH, SOTC, BATBUOC) VALUES 
+('MH001', N'Cơ sở dữ liệu', 4, 1),
+('MH002', N'Hệ quản trị CSDL', 4, 1),
+('MH003', N'Lập trình trực quan', 3, 1),
+('MH004', N'An toàn thông tin', 3, 0),
+('MH005', N'Hóa học thực phẩm', 3, 1),
+('MH006', N'Quản trị học', 3, 1),
+('MH007', N'Tiếng Anh cơ bản', 2, 0);
+
+INSERT INTO KETQUA (MASV, MAMH, HOCKY, DIEMTHI) VALUES 
+('SV001', 'MH001', 1, 8.5),
+('SV001', 'MH002', 1, 7.0),
+('SV001', 'MH003', 1, 6.5),
+('SV002', 'MH001', 1, 4.0), -- Học kỳ 1 rớt
+('SV002', 'MH001', 2, 7.5), -- Học kỳ 2 thi lại đạt
+('SV002', 'MH002', 1, 8.0),
+('SV003', 'MH001', 1, 3.5), -- Rớt môn
+('SV003', 'MH002', 1, 5.0),
+('SV004', 'MH001', 1, 9.0),
+('SV004', 'MH002', 1, 9.5),
+('SV004', 'MH003', 1, 8.0),
+('SV005', 'MH001', 1, 7.5),
+('SV005', 'MH002', 1, 6.0),
+('SV006', 'MH001', 1, 6.0),
+('SV006', 'MH002', 1, 5.5),
+('SV007', 'MH001', 1, 8.0),
+('SV007', 'MH002', 1, 8.5),
+('SV008', 'MH001', 1, 2.0), -- Rớt môn
+('SV009', 'MH001', 1, 7.0),
+('SV010', 'MH005', 1, 8.0),
+('SV011', 'MH005', 1, 5.5),
+('SV012', 'MH005', 1, 3.0), -- Rớt môn
+('SV013', 'MH006', 1, 7.5),
+('SV014', 'MH006', 1, 4.5), -- Rớt môn
+('SV015', 'MH006', 1, 6.0);
+GO</pre>
+
+        <!-- PHẦN II -->
+        <h1 id="phan-ii">PHẦN II: HỆ THỐNG PHIẾU BÀI TẬP THỰC HÀNH HÀNG TUẦN</h1>
+
+        <!-- PHIẾU 1 -->
+        <h2 id="phieu-1">📑 PHIẾU BÀI TẬP SỐ 1: CẤU TRÚC VẬT LÝ, RÀNG BUỘC TOÀN VẸN VÀ VIEW NÂNG CAO</h2>
+        <div class="question">
+            <span class="q-title">Mục 1: Khai thác cấu trúc vật lý hệ thống</span>
+            <div class="q-desc">
+                <ul>
+                    <li><strong>Câu 1.1:</strong> Viết câu lệnh T-SQL kiểm tra danh sách tập tin vật lý (<code>.mdf</code>, <code>.ldf</code>) của CSDL <code>QL_SINHVIEN</code> đang đặt tại thư mục nào trên phân vùng đĩa. Xác định dung lượng hiện tại của Transaction Log dựa trên bảng hệ thống.</li>
+                    <li><strong>Câu 1.2:</strong> Thực hiện lệnh bổ sung một <code>FILEGROUP</code> mang tên <code>DATA_SECONDARY</code> vào CSDL. Sau đó gắn thêm một tập tin dữ liệu phụ <code>QLSV_DATA2.ndf</code> vào filegroup này với kích thước khởi tạo 5MB, tự tăng trưởng 10%.</li>
+                    <li><strong>Câu 1.3:</strong> Giả lập tình huống phân vùng lưu trữ nhật ký bị đầy. Hãy viết câu lệnh thu hẹp dung lượng tập tin log (<code>QLSV_LOG</code>) về cấu hình tối thiểu 2MB bằng lệnh <code>DBCC SHRINKFILE</code>.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="question">
+            <span class="q-title">Mục 2: Ràng buộc toàn vẹn nâng cao (Constraints)</span>
+            <div class="q-desc">
+                <ul>
+                    <li><strong>Câu 1.4:</strong> Hãy bổ sung một ràng buộc kiểm tra (<code>CHECK Constraint</code>) trên bảng <code>SINHVIEN</code> sao cho dữ liệu ngày sinh (<code>NGSINH</code>) khi nhập vào phải đảm bảo sinh viên đó đủ từ 18 tuổi trở lên tính đến năm hiện hành của hệ thống máy chủ.</li>
+                    <li><strong>Câu 1.5:</strong> Thử nghiệm chèn một dòng sinh viên mới dính lỗi vi phạm ràng buộc khóa ngoại (Ví dụ chèn mã lớp <code>'24DHTH99'</code> chưa tồn tại trong bảng danh mục lớp). Hãy sao chép thông báo lỗi trả về của hệ thống và giải trình cơ chế chặn lỗi.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="question">
+            <span class="q-title">Mục 3: Bảng ảo (View) phối hợp biểu thức tính toán và hàm gộp nhóm</span>
+            <div class="q-desc">
+                <ul>
+                    <li><strong>Câu 1.6:</strong> Khởi tạo bảng ảo tên là <code>vw_DiemTrungBinhTichLuy</code> hiển thị danh sách gồm: <em>Mã sinh viên, Họ tên, Mã Lớp, Tổng số tín chỉ tích lũy (chỉ tính các môn đạt điểm thi $\ge 5.0$)</em> và <em>Điểm trung bình tích lũy hệ số 10 (Điểm TB = Tổng (Điểm thi $	imes$ Số tín chỉ) / Tổng số tín chỉ)</em>.</li>
+                </ul>
+                <div class="edge-case-box">
+                    <div class="edge-case-title">💡 Ngóc ngách logic cần giải quyết (Edge Case):</div>
+                    Sinh viên có quyền thi một môn học nhiều lần ở các học kỳ khác nhau để cải thiện điểm. Câu lệnh truy vấn trong View bắt buộc phải lọc lấy <strong>điểm thi lớn nhất (MAX)</strong> của môn học đó, tuyệt đối không được cộng gộp nhân đôi số tín chỉ môn học đó khi tính tổng tín chỉ tích lũy.
+                </div>
+                <ul>
+                    <li><strong>Câu 1.7:</strong> Thiết lập View <code>vw_ThongKeHocVu</code> liệt kê danh mục các lớp học kèm theo tỷ lệ sinh viên rớt môn. Chỉ hiển thị các lớp học có tỷ lệ sinh viên bị xếp loại rớt môn (sinh viên có tối thiểu một môn dưới 5.0 ở học kỳ gần nhất) chiếm tỷ lệ vượt quá 30% tổng sĩ số của lớp đó.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- PHIẾU 2 -->
+        <h2 id="phieu-2">📑 PHIẾU BÀI TẬP SỐ 2: LẬP TRÌNH CƠ SỞ DỮ LIỆU (STORED PROCEDURE & FUNCTION)</h2>
+        <div class="question">
+            <span class="q-title">Mục 1: Thủ tục lưu trữ (Stored Procedure)</span>
+            <div class="q-desc">
+                <ul>
+                    <li><strong>Câu 2.1:</strong> Lập trình Stored Procedure tên là <code>sp_ThemSinhVien</code> nhận các tham số tương ứng với các cột của bảng <code>SINHVIEN</code>.</li>
+                </ul>
+                <div class="edge-case-box">
+                    <div class="edge-case-title">💡 Ngóc ngách nghiệp vụ bẫy lỗi đầu vào:</div>
+                    Trong thân thủ tục, trước khi chạy lệnh <code>INSERT</code>, sinh viên phải viết các khối kiểm tra:<br>
+                    1. Nếu <code>MASV</code> truyền vào đã tồn tại $
+ightarrow$ Báo lỗi bằng <code>RAISERROR</code> và ngắt thủ tục bằng lệnh <code>RETURN</code>.<br>
+                    2. Nếu <code>MALOP</code> truyền vào chưa tồn tại trong bảng danh mục <code>LOP</code> $
+ightarrow$ Báo lỗi lớp không hợp lệ và ngắt tiến trình.<br>
+                    3. Chỉ khi vượt qua các bước kiểm tra mới chèn bản ghi và in ra chuỗi "Thêm mới sinh viên thành công".
+                </div>
+                <ul>
+                    <li><strong>Câu 2.2:</strong> Xây dựng Stored Procedure tên là <code>sp_LayThongKeLop</code> tiếp nhận tham số đầu vào là <code>@MaLop VARCHAR(10)</code>. Thủ tục phải kết xuất và trả về 2 giá trị dạng số nguyên ra màn hình thông qua tham số đầu ra (<code>OUTPUT</code>):
+                        <ol>
+                            <li>Số lượng sinh viên thuộc giới tính Nam của lớp đó.</li>
+                            <li>Số lượng sinh viên thuộc giới tính Nữ của lớp đó.</li>
+                        </ol>
+                        Viết đoạn lệnh khai báo các biến để gọi thực thi thủ tục này và xuất kết quả kiểm thử.
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="question">
+            <span class="q-title">Mục 2: Hàm do người dùng định nghĩa (User-Defined Function)</span>
+            <div class="q-desc">
+                <ul>
+                    <li><strong>Câu 2.3:</strong> Thiết lập hàm vô hướng (<code>Scalar Function</code>) mang tên <code>fn_XepLoaiSinhVien</code> nhận vào tham số điểm số <code>@DiemTB DECIMAL(3,1)</code>. Hàm xử lý cấu trúc điều kiện trả về chuỗi ký tự <code>NVARCHAR(10)</code> quy định: Điểm $\ge 9.0$: "Xuất sắc", 8.0 - 8.9: "Giỏi", 6.5 - 7.9: "Khá", 5.0 - 6.4: "Trung bình", và dưới 5.0 xếp loại "Yếu".</li>
+                    <li><strong>Câu 2.4:</strong> Thiết lập hàm trả về cấu trúc bảng (<code>Inline Table-Valued Function</code>) có tên là <code>fn_DanhSachHocLai</code>. Hàm nhận vào hai tham số: <code>@MaMonHoc VARCHAR(10)</code> và <code>@HocKy INT</code>. Kết quả hàm trả về bảng chi tiết (Mã SV, Họ tên, Điểm thi) các sinh viên dính kết quả điểm dưới 5.0 của môn học và học kỳ chỉ định.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- PHIẾU 3 -->
+        <h2 id="phieu-3">📑 PHIẾU BÀI TẬP SỐ 3: LẬP TRÌNH BẪY LỖI TỰ ĐỘNG VÀ CON TRỎ TRÊN BỘ DỮ LIỆU (TRIGGER & CURSOR)</h2>
+        <div class="question">
+            <span class="q-title">Mục 1: Triggers quản lý tính toàn vẹn dữ liệu động</span>
+            <div class="q-desc">
+                <ul>
+                    <li><strong>Câu 3.1:</strong> Cài đặt một <code>AFTER INSERT Trigger</code> đặt trên bảng dữ liệu <code>SINHVIEN</code>. Mỗi khi có bản ghi sinh viên mới được ghi nhận vào lớp, trigger phải tự động tính toán cộng thêm <code>1</code> vào cột sĩ số (<code>SISO</code>) của lớp học đó trong bảng <code>LOP</code>.</li>
+                </ul>
+                <div class="edge-case-box">
+                    <div class="edge-case-title">💡 Ngóc ngách kỹ thuật (Tránh bẫy dòng đơn):</div>
+                    Sinh viên tuyệt đối không dùng biến đơn để gán dữ liệu từ bảng ảo <code>Inserted</code> (như lệnh gán SELECT @MaLop = MALOP FROM Inserted), vì lệnh này sẽ chạy sai hoàn toàn khi giáo vụ thực hiện chèn đồng thời một danh sách gồm nhiều dòng sinh viên. Bản chất trigger phải được viết dựa trên câu lệnh toán tử gộp nhóm <code>UPDATE LOP SET SISO = SISO + Count... FROM LOP JOIN Inserted... GROUP BY...</code> để đảm bảo sĩ số luôn đồng bộ chính xác.
+                </div>
+                <ul>
+                    <li><strong>Câu 3.2:</strong> Cài đặt một <code>AFTER DELETE Trigger</code> cài đặt trên bảng <code>SINHVIEN</code>. Khi xóa bản ghi sinh viên, trigger tự động thực hiện trừ sĩ số lớp học đó đi <code>1</code> đơn vị. Đồng thời bổ sung logic: Nếu sĩ số lớp học sau khi trừ giảm về mức bằng 0, phát thông báo dòng chữ bằng lệnh <code>PRINT</code> nhằm cảnh báo lớp trống.</li>
+                    <li><strong>Câu 3.3:</strong> Cài đặt một <code>AFTER UPDATE Trigger</code> trên bảng <code>KETQUA</code>. Nếu cán bộ thực hiện chỉnh sửa trường điểm thi (<code>DIEMTHI</code>), trigger tiến hành kiểm tra xem giá trị điểm mới nạp có nằm trong khoảng thang chuẩn từ 0.0 đến 10.0 hay không. Nếu phát hiện vi phạm, thực hiện hủy bỏ giao tác quay lui bằng lệnh <code>ROLLBACK TRANSACTION</code> và báo lỗi.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="question">
+            <span class="q-title">Mục 2: Con trỏ duyệt dữ liệu hàng dọc (Cursor)</span>
+            <div class="q-desc">
+                <ul>
+                    <li><strong>Câu 3.4:</strong> Viết một đoạn chương trình T-SQL hoàn chỉnh có sử dụng cấu trúc vòng lặp <code>CURSOR</code> duyệt qua danh mục tất cả các sinh viên trong bảng <code>SINHVIEN</code>. Tại mỗi dòng sinh viên duyệt qua, thực hiện chuỗi tác vụ:
+                        <ol>
+                            <li>Tính toán điểm trung bình thi tất cả các môn của sinh viên đó từ bảng <code>KETQUA</code>.</li>
+                            <li>Gọi hàm vô hướng <code>fn_XepLoaiSinhVien</code> (ở Phiếu 2) để quy đổi ra chuỗi xếp loại tương ứng.</li>
+                            <li>Chạy lệnh cập nhật (<code>UPDATE</code>) trực tiếp giá trị tính được vào hai trường <code>DIEMTB</code> và <code>XEPLOAI</code> của chính dòng sinh viên con trỏ đang trỏ tới.</li>
+                        </ol>
+                        <span class="bold">Yêu cầu bắt buộc:</span> Kiểm tra biến trạng thái <code>@@FETCH_STATUS = 0</code> để điều khiển vòng lặp và gọi đầy đủ hai lệnh đóng con trỏ (<code>CLOSE</code>) và giải phóng bộ nhớ (<code>DEALLOCATE</code>) cuối lệnh.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- PHIẾU 4 -->
+        <h2 id="phieu-4">📑 PHIẾU BÀI TẬP SỐ 4: QUẢN TRỊ BẢO MẬT VÀ PHÂN QUYỀN HỆ THỐNG (SECURITY)</h2>
+        <div class="question">
+            <span class="q-title">Câu 4.1: Tạo lập tài khoản và cấp phát quyền cơ bản</span>
+            <div class="q-desc">
+                Viết mã lệnh T-SQL thực hiện chuỗi hành động quản trị bảo mật an toàn thông tin sau:
+                <ol>
+                    <li>Khởi tạo một tài khoản xác thực đăng nhập máy chủ (SQL Server Login) đặt tên là <code>GiaoVuLogin</code> với mật khẩu bảo mật tự chọn.</li>
+                    <li>Tạo một người dùng cơ sở dữ liệu (Database User) mang tên <code>User_GiaoVu</code> bên trong CSDL <code>QL_SINHVIEN</code> liên kết với Login vừa tạo.</li>
+                    <li>Cấp phát hệ thống quyền bao gồm <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code> cho người dùng <code>User_GiaoVu</code> thao tác trên hai bảng đối tượng <code>SINHVIEN</code> và <code>LOP</code>.</li>
+                </ol>
+            </div>
+        </div>
+        <div class="question">
+            <span class="q-title">Câu 4.2: Bảo mật mức độ cột (Column Level Security) và chặn quyền tuyệt đối</span>
+            <div class="q-desc">
+                Áp dụng chính sách an toàn thông tin: Tài khoản sinh viên chỉ được xem các cột định danh cơ bản của đồng học, không được quyền coi thông tin riêng tư (ngày sinh, địa chỉ) hoặc can thiệp chỉnh sửa điểm.
+                <ol>
+                    <li>Khởi tạo một Login tên là <code>SinhVienLogin</code> và tạo User tương ứng đặt tên là <code>User_SinhVien</code> bên trong CSDL.</li>
+                    <li>Cấp quyền hạn chế cho tài khoản <code>User_SinhVien</code> chỉ được phép thực hiện lệnh xem dữ liệu (<code>SELECT</code>) trên đúng ba cột chuyên biệt: <code>MASV</code>, <code>HOTEN</code>, <code>GIOITINH</code> thuộc bảng <code>SINHVIEN</code>.</li>
+                    <li>Sử dụng cấu trúc câu lệnh <code>DENY</code> ngăn chặn tuyệt đối không cho phép tài khoản <code>User_SinhVien</code> gọi lệnh xóa dữ liệu (<code>DELETE</code>) trên bảng điểm <code>KETQUA</code> dưới mọi hình thức gán quyền nhóm sau này.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- PHIẾU 5 -->
+        <h2 id="phieu-5">📑 PHIẾU BÀI TẬP SỐ 5: CHIẾN LƯỢC SAO LƯU VÀ PHỤC HỒI THẢM HỌA (BACKUP & RESTORE)</h2>
+        <div class="question">
+            <span class="q-title">Câu 5.1: Xây dựng chuỗi kịch bản sao lưu thay đổi theo dòng thời gian</span>
+            <div class="q-desc">
+                Viết toàn bộ các câu lệnh T-SQL quản trị thực hiện chuỗi hành động sao lưu liên tiếp (Không sử dụng công cụ đồ họa SSMS):
+                <ol>
+                    <li>Cấu hình đưa Database <code>QL_SINHVIEN</code> về mô hình phục hồi dữ liệu đầy đủ: <code>ALTER DATABASE QL_SINHVIEN SET RECOVERY FULL;</code></li>
+                    <li>Thực hiện lập tức một bản sao lưu toàn diện ban đầu (<code>FULL BACKUP</code>) lưu file vào đường dẫn <code>C:\Backup\QLSV_Full.bak</code>.</li>
+                    <li>Chèn một dòng dữ liệu lớp học mới vào bảng <code>LOP</code> (Mã: <code>'24DHTH03'</code>, tên lớp: <code>'Đại học Tin học 03'</code>).</li>
+                    <li>Thực hiện một bản sao lưu tích lũy khác biệt (<code>DIFFERENTIAL BACKUP</code>) lưu file vào đường dẫn <code>C:\Backup\QLSV_Diff.bak</code>.</li>
+                    <li>Chèn tiếp một bản ghi sinh viên mới vào lớp học vừa khởi tạo ở bước trên.</li>
+                    <li>Thực hiện một bản sao lưu nhật ký giao dịch (<code>LOG BACKUP</code>) lưu file vào đường dẫn <code>C:\Backup\QLSV_Log1.trn</code>.</li>
+                </ol>
+            </div>
+        </div>
+        <div class="question">
+            <span class="q-title">Câu 5.2: Tái cấu trúc khôi phục phục hồi dữ liệu từ thảm họa đột xuất</span>
+            <div class="q-desc">
+                Giả lập tình huống tệp tin dữ liệu chính (<code>.mdf</code>) bị hỏng hoặc xóa mất đột ngột. Sinh viên đóng vai trò DBA viết chuỗi câu lệnh khôi phục hệ thống theo đúng quy tắc trình tự thời gian từ các file lưu trữ ở <strong>Câu 5.1</strong> để cứu dữ liệu về trạng thái toàn vẹn gần nhất.
+                <div class="edge-case-box">
+                    <div class="edge-case-title">⚠️ Lưu ý kỹ thuật cốt lõi:</div>
+                    Khi viết lệnh khôi phục các file lưu trữ trung gian (File Full và File Diff), bắt buộc phải sử dụng tùy chọn tham số <code>WITH NORECOVERY</code> để giữ Database ở trạng thái chờ tiếp nhận log. Chỉ riêng lệnh khôi phục đối với tệp tin Log cuối cùng (File <code>.trn</code>) mới được dùng từ khóa <code>WITH RECOVERY</code> để SQL Server đóng gói tiến trình mở cửa database.
+                </div>
+            </div>
+        </div>
+
+        <!-- PHIẾU 6 -->
+        <h2 id="phieu-6">📑 PHIẾU BÀI TẬP SỐ 6: QUẢN LÝ GIAO TÁC VÀ GIẢ LẬP TRANH CHẤP ĐỒNG THỜI</h2>
+        <div class="question">
+            <span class="q-title">Mục 1: Thiết kế giao tác an toàn với TRY...CATCH</span>
+            <div class="q-desc">
+                <ul>
+                    <li><strong>Câu 6.1:</strong> Lập trình đoạn mã lệnh T-SQL bao bọc toàn bộ mã sửa đổi dữ liệu vào khối <code>BEGIN TRANSACTION ... COMMIT TRANSACTION</code> kết hợp cấu trúc bẫy lỗi <code>BEGIN TRY...END TRY / BEGIN CATCH...END CATCH</code>. Đoạn chương trình thực hiện đồng thời hai hành động:
+                        <ol>
+                            <li>Thực hiện phép trừ Sĩ số (<code>SISO</code>) của lớp học mã <code>'24DHTH01'</code> đi 1 đơn vị.</li>
+                            <li>Thực hiện xóa (<code>DELETE</code>) sinh viên mang mã số <code>'SV001'</code> ra khỏi bảng <code>SINHVIEN</code>.</li>
+                        </ol>
+                    </li>
+                </ul>
+                <div class="edge-case-box">
+                    <div class="edge-case-title">💡 Ngóc ngách bẫy lỗi kiểm tra logic:</div>
+                    Cấu hình đoạn mã sao cho nếu lệnh xóa sinh viên bị lỗi hệ thống chặn lại do vi phạm ràng buộc dữ liệu bảng khác, tiến trình lập tức nhảy vào khối <code>CATCH</code>. Tại đây, chương trình bắt buộc phải gọi lệnh <code>ROLLBACK TRANSACTION</code> trả dữ liệu sĩ số lớp học về trạng thái nguyên bản, ngăn chặn hoàn toàn việc lệch sĩ số lớp học.
+                </div>
+            </div>
+        </div>
+        <div class="question">
+            <span class="q-title">Mục 2: Giả lập và xử lý tranh chấp đồng thời giữa các Sessions</span>
+            <div class="q-desc">
+                <p class="text-danger">
+                    Hướng dẫn thao tác phòng máy: Sinh viên mở song song hai tab truy vấn riêng biệt (Cửa sổ 1 - Session 1 và Cửa sổ 2 - Session 2) trên phần mềm SSMS để giả lập kịch bản chạy đồng thời.
+                </p>
+                <ul>
+                    <li><strong>Câu 6.2 (Hiện tượng Dirty Read - Đọc dữ liệu rác):</strong>
+                        <br>&bull; <strong>Session 1:</strong> Khởi tạo một giao tác thực hiện sửa (<code>UPDATE</code>) địa chỉ của sinh viên <code>'SV002'</code> từ <code>'Hà Nội'</code> thành <code>'Hải Phòng'</code>, dính thêm lệnh hoãn thời gian <code>WAITFOR DELAY '00:00:10'</code> (10 giây) và cố tình chưa gọi lệnh COMMIT.
+                        <br>&bull; <strong>Session 2:</strong> Thiết lập mức cô lập dữ liệu thấp: <code>SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;</code>. Viết câu lệnh đọc thông tin địa chỉ sinh viên <code>'SV002'</code> ngay khi Session 1 đang chờ.
+                        <br>&bull; <strong>Yêu cầu:</strong> Đánh giá xem kết quả hiển thị tại Session 2 có nhìn thấy giá trị chữ <code>'Hải Phòng'</code> hay không? Giải thích rõ bản chất rủi ro của dữ liệu rác nếu Session 1 bất ngờ chạy lệnh ROLLBACK sau đó.
+                    </li>
+                    <li><strong>Câu 6.3 (Hiện tượng Phantom - Bóng ma dữ liệu & Giải pháp):</strong>
+                        <br>&bull; <strong>Session 1:</strong> Thiết lập mức cô lập: <code>SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;</code>. Khởi tạo một giao tác gọi lệnh đếm tổng số lượng sinh viên của lớp mã số <code>'24DHTH01'</code>. Đặt lệnh chờ hệ thống <code>WAITFOR DELAY '00:00:10'</code> (10 giây) trước khi chạy lệnh đếm lại lần 2.
+                        <br>&bull; <strong>Session 2:</strong> Thực hiện lệnh chèn (<code>INSERT</code>) một bản ghi sinh viên mới vào lớp <code>'24DHTH01'</code> và gọi lệnh <code>COMMIT</code> ngay khi Session 1 đang trong thời gian chờ 10 giây.
+                        <br>&bull; <strong>Yêu cầu:</strong> Ghi nhận kết quả đếm số dòng giữa hai lần của Session 1 có dính lệch số liệu không? Đưa ra giải pháp nâng mức cô lập hệ thống lên từ khóa nào để chống triệt để bóng ma dữ liệu (Phantom Read).
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- PHẦN III -->
+        <h1 id="phan-iii">PHẦN III: HỆ THỐNG ĐỀ KIỂM TRA ĐÁNH GIÁ ĐỊNH KỲ CHUẨN RUBRIC</h1>
+        <p>
+            Dưới đây là nội dung chi tiết 2 đề kiểm tra đánh giá kỹ năng thực hành định kỳ được biên soạn đồng bộ hóa với hệ thống tiêu chí phân loại ma trận Rubric quy định của học phần.
+        </p>
+
+        <!-- ĐỀ KTRA 1 -->
+        <div class="exam-header">
+            <table class="exam-info-table">
+                <tr>
+                    <td class="bold">KHOA CÔNG NGHỆ THÔNG TIN</td>
+                    <td style="text-align: right;" class="bold">MÃ HỌC PHẦN: 0101005073</td>
+                </tr>
+                <tr>
+                    <td class="bold" style="color: var(--primary-color);">ĐỀ KIỂM TRA THỰC HÀNH SỐ 1 (Đánh giá học phần hệ Đại học)</td>
+                    <td style="text-align: right; font-style: italic;">Thời gian làm bài: 50 phút</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-top: 1px solid var(--border-color); padding-top: 8px; font-size: 13px; color: #4a5568;">
+                        <strong>Nội dung kiểm tra:</strong> Các nhóm kiến thức Chương 1, 2, 3 (Tạo CSDL, Ràng buộc dữ liệu, Stored Procedure, Hàm Function, Vòng lặp Cursor) - Đánh giá chuẩn đầu ra học phần: <strong>CLO1</strong>. Sinh viên viết mã lưu tệp lệnh dạng <code>[MãSốSinhViên_HọTên_Đề1].sql</code>.
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <h3 id="dethi-1">A. Nội dung đề thi mã số 01</h3>
+        <div class="question">
+            <span class="bold">Câu 1 (3.0 điểm) - Khởi tạo cấu trúc bảng dữ liệu phụ thuộc và ràng buộc giá trị:</span>
+            <div class="q-desc">
+                Viết khối lệnh T-SQL bổ sung trực tiếp vào CSDL <code>QL_SINHVIEN</code> một bảng quản lý danh mục mới đặt tên là <code>QUY_HOC_BONG</code> gồm định nghĩa các trường dữ liệu: <code>MA_QHB VARCHAR(10) Khóa chính</code>, <code>TEN_QHB NVARCHAR(50) NOT NULL</code>, <code>MUC_TIEN DECIMAL(18,2)</code>. Cài đặt ràng buộc kiểm tra kiểm soát dữ liệu (<code>CHECK Constraint</code>) đảm bảo giá trị tiền học bổng nạp vào luôn lớn hơn mức 0. Viết lệnh nạp 3 dòng dữ liệu mẫu chuẩn vào bảng.
+            </div>
+        </div>
+        <div class="question">
+            <span class="bold">Câu 2 (2.0 điểm) - Lập trình thủ tục lưu trữ điều khiển nghiệp vụ (Stored Procedure):</span>
+            <div class="q-desc">
+                Lập trình một Stored Procedure tên là <code>sp_CapNhatDiemSV</code> tiếp nhận danh sách 3 tham số đầu vào: <code>@MaSV VARCHAR(10)</code>, <code>@MaMH VARCHAR(10)</code>, <code>@DiemMoi DECIMAL(3,1)</code>. 
+                <br><em>Yêu cầu nghiệp vụ:</em> Trong thân thủ tục phải kiểm tra xác thực mã sinh viên và mã môn học có tồn tại trên hệ thống hay không, nếu thiếu hụt dữ liệu gốc thì dùng lệnh phát thông báo ngắt lệnh. Nếu hợp lệ, tiến hành cập nhật sửa đổi cột <code>DIEMTHI</code> ở bảng điểm <code>KETQUA</code> tương ứng với mốc học kỳ lớn nhất hiện tại của sinh viên đó.
+            </div>
+        </div>
+        <div class="question">
+            <span class="bold">Câu 3 (2.0 điểm) - Lập trình hàm người dùng định nghĩa kết xuất bảng (Function):</span>
+            <div class="q-desc">
+                Xây dựng hàm trả về cấu trúc bảng dữ liệu (<code>Table-Valued Function</code>) mang tên <code>fn_TopSinhVienXuatSac</code>. Hàm nhận vào tham số lọc điều kiện là <code>@MaKhoa VARCHAR(10)</code> và kết xuất bảng dữ liệu gồm các trường: <em>Mã SV, Họ tên, Tên Lớp, Điểm trung bình</em> của đúng top 3 sinh viên đạt kết quả điểm trung bình thi cao nhất thuộc Khoa chỉ định.
+            </div>
+        </div>
+        <div class="question">
+            <span class="bold">Câu 4 (2.0 điểm) - Vận dụng con trỏ quét quét dữ liệu hàng dọc đồng bộ sĩ số (Cursor):</span>
+            <div class="q-desc">
+                Viết đoạn mã lệnh sử dụng kiến thức cấu trúc vòng lặp hoán vị <code>CURSOR</code> thực hiện quét tuần tự từng dòng bản ghi lớp học trong bảng danh mục <code>LOP</code>. Tại mỗi dòng lớp học duyệt qua, tiến hành chạy lệnh đếm số lượng sinh viên thực tế ghi nhận ở bảng <code>SINHVIEN</code>, sau đó cập nhật sửa đổi trực tiếp số liệu vừa đếm được vào cột sĩ số (<code>SISO</code>) của bảng <code>LOP</code> để làm sạch đồng bộ hệ thống. Đảm bảo đóng và giải phóng con trỏ.
+            </div>
+        </div>
+        <div class="question">
+            <span class="bold">Câu 5 (1.0 điểm) - Tối ưu hóa biểu thức lọc xử lý dữ liệu trống (NULL):</span>
+            <div class="q-desc">
+                Viết truy vấn hiển thị danh sách toàn bộ sinh viên trong trường, yêu cầu đối với các sinh viên khóa mới chưa từng tham gia dự thi môn học nào (Không tồn tại bản ghi điểm ở bảng KETQUA), hệ thống phải tự động tính toán xuất dòng chữ trạng thái <code>N'Chưa tích lũy điểm'</code> thay vì để rỗng trường giá trị hiển thị (NULL).
+            </div>
+        </div>
+
+        <h3>B. Bảng tiêu chí ma trận điểm số Rubric chấm điểm bài kiểm tra 1</h3>
+        <table class="rubric-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Tiêu chí phân loại (Trọng số)</th>
+                    <th style="width: 15%;">Mức Xuất sắc<br>(10 - 8.5)</th>
+                    <th style="width: 15%;">Mức Khá - Giỏi<br>(8.4 - 7.0)</th>
+                    <th style="width: 15%;">Mức Trung bình<br>(6.9 - 5.5)</th>
+                    <th style="width: 15%;">Mức Yếu<br>(5.4 - 4.0)</th>
+                    <th style="width: 15%;">Mức Kém<br>(3.9 - 0.0)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="bold">Cấu trúc thực thể bảng & Ràng buộc miền (30%)</td>
+                    <td>Mã lệnh biên dịch chính xác 100%, thiết lập đầy đủ hệ thống khóa chính và ràng buộc CHECK chuẩn biên dữ liệu.</td>
+                    <td>Tạo đủ bảng đối tượng và liên kết khóa nhưng cấu hình điều kiện ràng buộc CHECK bị thiếu trường hợp biên.</td>
+                    <td>Tạo được cấu trúc bảng nhưng lỗi kiểu định dạng dữ liệu cột hoặc dính lỗi liên kết trường khóa ngoại.</td>
+                    <td>Chỉ tạo được bảng trắng sơ sài, hoàn toàn không cấu hình được các ràng buộc kiểm soát an toàn dữ liệu.</td>
+                    <td>Mã lệnh dính lỗi cú pháp nghiêm trọng, hệ thống từ chối khởi tạo thực thể.</td>
+                </tr>
+                <tr>
+                    <td class="bold">Thủ tục lưu trữ nghiệp vụ SP (20%)</td>
+                    <td>Thủ tục nhận tham số chuẩn đầu vào, có tích hợp logic kiểm tra bẫy lỗi toàn diện và cập nhật chuẩn xác.</td>
+                    <td>Thủ tục thực thi tốt ra kết quả đúng nhưng bỏ sót bước viết mã bẫy lỗi logic kiểm tra thực thể gốc.</td>
+                    <td>Cấu trúc thủ tục viết sai cú pháp định nghĩa INPUT/OUTPUT hoặc sai toán tử điều khiển chỉnh sửa.</td>
+                    <td>Chỉ viết được từ khóa đặt tên thủ tục, hoàn toàn bỏ rỗng phần thân xử lý nghiệp vụ bên trong.</td>
+                    <td>Không hoàn thành được nội dung hoặc cấu trúc lỗi hệ thống không thể nạp.</td>
+                </tr>
+                <tr>
+                    <td class="bold">Hàm Function kết xuất bảng (20%)</td>
+                    <td>Hàm trả về cấu trúc bảng chính xác, thuật toán xử lý lồng mệnh đề lọc tìm dữ liệu Top 3 chạy tối ưu.</td>
+                    <td>Hàm chạy ra số liệu đúng với yêu cầu nhưng trả về sai quy chuẩn định dạng bảng hiển thị.</td>
+                    <td>Sai cú pháp cấu trúc định nghĩa hàm Table-valued, viết nhầm sang cấu trúc hàm trả giá trị đơn lẻ.</td>
+                    <td>Hàm dính lỗi hệ thống, không vượt qua bước biên dịch để kết xuất dữ liệu mẫu.</td>
+                    <td>Không hoàn thành câu hỏi hoặc thân hàm bỏ trống hoàn toàn.</td>
+                </tr>
+                <tr>
+                    <td class="bold">Vòng lặp Cursor đồng bộ dữ liệu (20%)</td>
+                    <td>Cursor vận hành tối ưu, hoán vị chuyển dòng chuẩn xác, có lệnh giải phóng triệt để tài nguyên RAM cuối lệnh.</td>
+                    <td>Cursor chạy ra kết quả đếm đúng sĩ số các lớp nhưng quên không viết lệnh CLOSE hoặc DEALLOCATE giải phóng.</td>
+                    <td>Vòng lặp Cursor bị lỗi logic điều khiển vòng lặp vô hạn do gán sai trạng thái kiểm tra của biến @@FETCH_STATUS.</td>
+                    <td>Khai báo cú pháp Cursor sai vị trí, không thực hiện được thao tác fetch dữ liệu vào biến hàng dọc.</td>
+                    <td>Bỏ trống câu hỏi hoặc không áp dụng được kiến thức cursor quét dòng dọc.</td>
+                </tr>
+                <tr>
+                    <td class="bold">Tối ưu hóa và Xử lý NULL (10%)</td>
+                    <td>Vận dụng xuất sắc nhóm hàm kiểm soát giá trị rỗng (ISNULL/COALESCE) kết hợp mệnh đề liên kết bảng hiển thị tối ưu.</td>
+                    <td>Sử dụng cấu trúc toán tử điều kiện rườm rà (CASE WHEN) ra kết quả đúng nhưng câu lệnh chưa tối ưu cấu trúc.</td>
+                    <td>Khai thác được danh sách sinh viên rỗng nhưng chưa xử lý chuyển đổi chữ hiển thị NULL sang chuỗi chữ yêu cầu.</td>
+                    <td>Liên kết bảng sai thực thể khiến nhóm sinh viên chưa tích lũy điểm bị loại khỏi bảng hiển thị (Dùng INNER thay vì LEFT JOIN).</td>
+                    <td>Viết mã lệnh sai lệch hoàn toàn bản chất hoặc bỏ trống không làm.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ĐỀ KTRA 2 -->
+        <div class="exam-header">
+            <table class="exam-info-table">
+                <tr>
+                    <td class="bold">KHOA CÔNG NGHỆ THÔNG TIN</td>
+                    <td style="text-align: right;" class="bold">MÃ HỌC PHẦN: 0101005073</td>
+                </tr>
+                <tr>
+                    <td class="bold" style="color: var(--primary-color);">ĐỀ KIỂM TRA THỰC HÀNH SỐ 2 (Đánh giá học phần hệ Đại học)</td>
+                    <td style="text-align: right; font-style: italic;">Thời gian làm bài: 50 phút</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-top: 1px solid var(--border-color); padding-top: 8px; font-size: 13px; color: #4a5568;">
+                        <strong>Nội dung kiểm tra:</strong> Các nhóm kiến thức Chương 3, 4, 5 (Cài đặt Trigger kiểm soát nâng cao, Bảo mật phân quyền hệ thống, Backup & Khôi phục, Quản lý giao tác cô lập) - Đánh giá chuẩn đầu ra: <strong>CLO2</strong>. Sinh viên viết mã lưu tệp lệnh dạng <code>[MãSốSinhViên_HọTên_Đề2].sql</code>.
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <h3 id="dethi-2">A. Nội dung đề thi mã số 02</h3>
+        <div class="question">
+            <span class="bold">Câu 1 (3.0 điểm) - Cài đặt Trigger kiểm soát dữ liệu liên bảng:</span>
+            <div class="q-desc">
+                Xây dựng một <code>AFTER INSERT, UPDATE Trigger</code> đặt trên bảng điểm <code>KETQUA</code>. Khi cán bộ giáo vụ nạp điểm mới hoặc cập nhật điểm thi cho sinh viên, trigger thực hiện kiểm tra logic: Nếu môn học phát sinh điểm đó thuộc nhóm môn học Bắt buộc (Bằng cách liên kết tra cứu cột thuộc tính định danh <code>BATBUOC = 1</code> trong bảng <code>MONHOC</code>) mà giá trị điểm số nhập vào dưới mức 5.0, trigger tiến hành in ra thông báo bằng chữ tiếng Việt có dấu: <code>N'Sinh viên cần đăng ký học lại môn bắt buộc này ở học kỳ kế tiếp'</code>.
+                <br><span class="bold">Yêu cầu ngóc ngách:</span> Kiến trúc mã lệnh trigger phải xử lý toàn diện được trường hợp cán bộ import đồng thời một tệp điểm gồm nhiều dòng bằng câu lệnh lồng gộp toán tử, tuyệt đối không dùng biến đơn lẻ gán từ dòng đầu của bảng Inserted.
+            </div>
+        </div>
+        <div class="question">
+            <span class="bold">Câu 2 (2.0 điểm) - Cài đặt bảo mật phân quyền an toàn thông tin hệ thống:</span>
+            <div class="q-desc">
+                Sử dụng các câu lệnh quản trị hệ thống T-SQL thuần túy thực hiện chuỗi phân quyền:
+                <br>1. Tạo một tài khoản đăng nhập máy chủ hệ thống (SQL Server Login) tên là <code>PhongDaoTaoLogin</code>. Tạo tài khoản người dùng dữ liệu tương ứng tên là <code>User_PDT</code> liên kết vào database.
+                <br>2. Cấp phát nhóm quyền hạn cho phép tài khoản <code>User_PDT</code> toàn quyền xem và sửa đổi cấu trúc bảng <code>LOP</code>.
+                <br>3. Áp dụng câu lệnh chặn quyền <code>DENY</code> để ngăn cấm tuyệt đối tài khoản này không được phép thực hiện thao tác xem dữ liệu của cột điểm thi <code>DIEMTHI</code> nằm trong bảng điểm <code>KETQUA</code>.
+            </div>
+        </div>
+        <div class="question">
+            <span class="bold">Câu 3 (2.0 điểm) - Chiến lược quản trị sao lưu phòng chống thảm họa và phục hồi di trú:</span>
+            <div class="q-desc">
+                Viết kịch bản mã lệnh quản trị thực hiện tiến trình bảo vệ an toàn tệp tin sau:
+                <br>1. Thực hiện lệnh sao lưu toàn phần (<code>FULL BACKUP</code>) cơ sở dữ liệu hệ thống <code>QL_SINHVIEN</code> lưu tệp tin nén vào đường dẫn ổ đĩa chỉ định <code>D:\Backup\QLSV_Data_Full.bak</code>.
+                <br>2. Viết câu lệnh khôi phục thảm họa (<code>RESTORE DATABASE</code>) giả lập khôi phục tệp sao lưu vừa tạo sang một cơ sở dữ liệu kiểm thử hoàn toàn mới đặt tên là <code>QL_SINHVIEN_TEST</code>. Sinh viên lưu ý dùng toán tử chuyển dịch <code>MOVE</code> để đổi đường dẫn vật lý cho các file mdf và ldf phụ thuộc mới nhằm tránh xung đột đè tệp tin đang chạy của hệ thống.
+            </div>
+        </div>
+        <div class="question">
+            <span class="bold">Câu 4 (2.0 điểm) - Lập trình quản lý giao tác an toàn ACID lồng cấu trúc bẫy lỗi:</span>
+            <div class="q-desc">
+                Viết đoạn mã lệnh T-SQL mô phỏng một giao tác chỉnh sửa dữ liệu an toàn. Tiến trình thực hiện đồng thời hai việc: Thêm mới một môn học tự chọn vào bảng <code>MONHOC</code>, sau đó nạp điểm thi cho một sinh viên ở bảng <code>KETQUA</code>. Toàn bộ chuỗi lệnh phải đặt trong khối điều khiển giao tác <code>BEGIN TRANSACTION</code> dính kèm khối bẫy lỗi hệ thống <code>TRY...CATCH</code>. Cấu hình sao cho nếu lệnh nạp điểm dính lỗi vi phạm khóa ngoại (Mã SV truyền vào không tồn tại), khối CATCH tự động gọi lệnh <code>ROLLBACK TRANSACTION</code> trả dữ liệu môn học tự chọn vừa thêm về trạng thái không có gì, giữ an toàn hệ thống.
+            </div>
+        </div>
+        <div class="question">
+            <span class="bold">Câu 5 (1.0 điểm) - Khai thác mức độ cô lập xử lý tranh chấp phiên (Concurrency Control):</span>
+            <div class="q-desc">
+                Nêu tên định danh mức độ cô lập dữ liệu giao tác (<code>TRANSACTION ISOLATION LEVEL</code>) cao cấp nhất trong hệ quản trị SQL Server có năng lực khóa bảng chống chặn triệt để hiện tượng dữ liệu bóng ma "Phantom Read" (Hiện tượng một phiên đọc đếm số lượng dòng dữ liệu 2 lần trong cùng một giao tác ra kết quả khác nhau do một phiên khác chen ngang chèn dòng mới). Viết câu lệnh thiết lập cấu hình mức cô lập đó.
+            </div>
+        </div>
+
+        <h3>B. Bảng tiêu chí ma trận điểm số Rubric chấm điểm bài kiểm tra 2</h3>
+        <table class="rubric-table">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Tiêu chí phân loại (Trọng số)</th>
+                    <th style="width: 15%;">Mức Xuất sắc<br>(10 - 8.5)</th>
+                    <th style="width: 15%;">Mức Khá - Giỏi<br>(8.4 - 7.0)</th>
+                    <th style="width: 15%;">Mức Trung bình<br>(6.9 - 5.5)</th>
+                    <th style="width: 15%;">Mức Yếu<br>(5.4 - 4.0)</th>
+                    <th style="width: 15%;">Mức Kém<br>(3.9 - 0.0)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="bold">Cài đặt Trigger kiểm soát dữ liệu liên bảng (30%)</td>
+                    <td>Trigger thiết kế chuẩn tối ưu, khai thác chính xác bảng ảo Inserted, hoạt động hoàn hảo khi chèn dữ liệu tệp nhiều dòng.</td>
+                    <td>Trigger vận hành đúng khi chèn đơn dòng, nhưng thuật toán dính lỗi hoặc báo lỗi hệ thống khi nhập liệu đồng thời nhiều dòng.</td>
+                    <td>Trigger định nghĩa đúng cấu trúc nhưng lọc sai mệnh đề JOIN bảng dẫn đến việc phát câu cảnh báo sai đối tượng môn học.</td>
+                    <td>Trigger dính lỗi hệ thống biên dịch cú pháp, không có khả năng tự động kích hoạt khi có sự kiện INSERT/UPDATE dữ liệu điểm.</td>
+                    <td>Không viết được mã lệnh hoặc viết sai lệch hoàn toàn bản chất nghiệp vụ của trigger kiểm soát.</td>
+                </tr>
+                <tr>
+                    <td class="bold">Bảo mật hệ thống & Phân quyền tài khoản (20%)</td>
+                    <td>Tạo lập chính xác Login/User dữ liệu, cấp quyền GRANT đúng thực thể bảng và thiết lập chặn mức cột bằng lệnh DENY hoàn hảo.</td>
+                    <td>Tạo đúng Login/User và cấp quyền thao tác, nhưng cấu trúc câu lệnh chặn mức cột của lệnh DENY bị viết sai cú pháp.</td>
+                    <td>Nhầm lẫn bản chất giữa Login hệ thống máy chủ và User đối tượng database, gán quyền sai thực thể chỉ định.</td>
+                    <td>Chỉ khởi tạo được tài khoản rỗng, hoàn toàn bất lực không triển khai được các câu lệnh phân quyền cấp phát quản trị.</td>
+                    <td>Bỏ trống không làm nội dung bảo mật an toàn thông tin hoặc viết mã lỗi.</td>
+                </tr>
+                <tr>
+                    <td class="bold">Chiến lược Sao lưu phòng ngừa & Di trú phục hồi (20%)</td>
+                    <td>Viết câu lệnh BACKUP hoàn chỉnh; Lệnh RESTORE đổi tên database vận dụng thành thạo từ khóa MOVE di dời file chính xác.</td>
+                    <td>Lệnh BACKUP chạy tốt, lệnh RESTORE tạo tên mới đúng cấu trúc nhưng quên tùy chọn MOVE gây lỗi ghi đè file cũ đang chạy.</td>
+                    <td>Chỉ hoàn thành được lệnh BACKUP dữ liệu thông thường, không nắm được cú pháp lệnh khôi phục đổi thực thể di trú dữ liệu.</td>
+                    <td>Viết sai tên thiết bị lưu trữ lưu file (DISK) hoặc sai đường dẫn thư mục vật lý chứa file backup.</td>
+                    <td>Không hoàn thành nội dung bài tập quản trị sao lưu phục hồi dữ liệu hệ thống.</td>
+                </tr>
+                <tr>
+                    <td class="bold">Quản lý giao tác an toàn dữ liệu ACID (20%)</td>
+                    <td>Sử dụng cấu trúc khối TRY...CATCH hoàn hảo, các lệnh chốt COMMIT hoặc hủy ROLLBACK đặt chuẩn vị trí logic an toàn dữ liệu.</td>
+                    <td>Giao tác thực thi điều khiển hủy lệnh đúng bản chất dữ liệu khi có lỗi nhưng bỏ quên không bọc cấu trúc khối TRY...CATCH.</td>
+                    <td>Giao tác thiết kế đặt sai vị trí lệnh điều khiển BEGIN TRANSACTION dẫn đến tiến trình hủy bỏ lệnh không toàn vẹn đối tượng phụ thuộc.</td>
+                    <td>Thiếu hụt câu lệnh COMMIT hoặc ROLLBACK khiến phiên làm việc bị treo lock độc quyền chiếm dụng tài nguyên hệ thống máy chủ.</td>
+                    <td>Không hiểu bản chất giao tác an toàn hoặc viết đoạn script dính lỗi cú pháp liên tục.</td>
+                </tr>
+                <tr>
+                    <td class="bold">Vận dụng giải quyết hiện tượng tranh chấp phiên (10%)</td>
+                    <td>Xác định chuẩn xác từ khóa cô lập SERIALIZABLE và triển khai câu lệnh cấu hình thiết lập mức cô lập hệ thống chính xác.</td>
+                    <td>Nêu đúng tên mức độ cô lập SERIALIZABLE giúp chống Phantom tốt nhưng cú pháp câu lệnh T-SQL thiết lập bị viết sai từ khóa.</td>
+                    <td>Nêu sai tên mức cô lập dữ liệu (Nhầm sang mức độ cô lập REPEATABLE READ hoặc READ COMMITTED chỉ chống được dữ liệu rác).</td>
+                    <td>Không hiểu bản chất hiện tượng bóng ma dữ liệu và cách thức hoạt động khóa của hệ quản trị cơ sở dữ liệu.</td>
+                    <td>Bỏ trống không hoàn thành câu hỏi lý thuyết vận dụng xử lý tranh chấp phiên chạy đồng thời.</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <script>
+        const navLinks = Array.from(document.querySelectorAll('.nav-links a'));
+        const sections = Array.from(document.querySelectorAll('main [id]'));
+
+        function updateActiveLink() {
+            const scrollPosition = window.scrollY + window.innerHeight * 0.2;
+            let currentId = sections[0]?.id || null;
+
+            for (const section of sections) {
+                if (section.offsetTop <= scrollPosition) {
+                    currentId = section.id;
+                }
+            }
+
+            navLinks.forEach(link => {
+                const isActive = link.getAttribute('href') === `#${currentId}`;
+                link.classList.toggle('active', isActive);
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveLink, { passive: true });
+        window.addEventListener('resize', updateActiveLink);
+        document.addEventListener('DOMContentLoaded', updateActiveLink);
+    </script>
+</body>
+</html>
