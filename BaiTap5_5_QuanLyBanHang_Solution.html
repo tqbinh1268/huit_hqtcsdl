@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lời giải Bài tập 5.5 - Hệ Quản Trị Cơ Sở Dữ Liệu</title>
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --secondary-color: #0284c7;
+            --accent-color: #ea580c;
+            --success-color: #16a34a;
+            --danger-color: #dc2626;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-dark: #0f172a;
+            --border-color: #cbd5e1;
+            --code-bg: #1e1e2e;
+            --code-text: #cdd6f4;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            border-bottom: 3px double var(--secondary-color);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--text-dark);
+            font-size: 26px;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--secondary-color);
+            font-size: 15px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .schema-box {
+            background-color: #f1f5f9;
+            border: 1px solid var(--border-color);
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .schema-box strong {
+            color: var(--text-dark);
+        }
+
+        .schema-line {
+            font-family: Consolas, monospace;
+            color: #b91c1c;
+            background: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 3px 0;
+        }
+
+        .part-title {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+
+        .role-section {
+            margin-bottom: 25px;
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 15px;
+        }
+
+        .role-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .question-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .question-header {
+            background-color: #f8fafc;
+            padding: 10px 15px;
+            font-weight: bold;
+            color: var(--text-dark);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14.5px;
+        }
+
+        .question-body {
+            padding: 15px;
+        }
+
+        .solution-title {
+            font-weight: bold;
+            color: var(--success-color);
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-size: 13px;
+            text-transform: uppercase;
+            display: block;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Fira Code', Consolas, Monaco, monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 5px 0 15px 0;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .dispute-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .dispute-box {
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .box-risk {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .box-solution {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .box-title {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .code-inline {
+            background-color: #f1f5f9;
+            color: #db2777;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Lời giải Bài tập 5.5 - Cài đặt & Giải quyết tranh chấp</h1>
+        <p class="subtitle">Hệ thống Cơ sở dữ liệu: Quản lý bán hàng</p>
+    </div>
+
+    <div class="schema-box">
+        <strong>Lược đồ Cơ sở dữ liệu gốc của đề bài:</strong><br>
+        <span class="schema-line">KHACHHANG(MAKH, HOTEN, NGAYSINH, PHAI, DCHI, DTHOAI)</span><br>
+        <span class="schema-line">NHACC(MANCC, TENNCC, DCHI, DTHOAI)</span><br>
+        <span class="schema-line">NHANVIEN(MANV, HOTEN, NGAYSINH, PHAI, DIACHI, DT)</span><br>
+        <span class="schema-line">HANG(MAHG, TENHG, DVT, SOLUONGTON, HANGSX, TINHTRANG)</span><br>
+        <span class="schema-line">PHIEUNHAP(MAPN, NGAYNHAP, MANCC, MANV, TIENNHAP)</span><br>
+        <span class="schema-line">CHITIETPN(MAPN, MAHG, SOLUONG, GIANHAP, THANHTIEN)</span><br>
+        <span class="schema-line">HOADON(MAHD, NGAYDAT, MAKH, MANV, TIENBAN)</span><br>
+        <span class="schema-line">CHITIETHD(MAHD, MAHG, SOLUONG, GIABAN, THANHTIEN)</span><br>
+        <span class="schema-line">DONGIA(MAHG, NGAYCN, GIA)</span>
+    </div>
+
+    <!-- PHẦN 1 -->
+    <div class="part-title">1) Hãy cài đặt các giao tác theo yêu cầu của đề bài</div>
+
+    <!-- Nhân viên kho -->
+    <div class="role-section">
+        <div class="role-name">✦ Đối với nhân viên kho</div>
+
+        <div class="question-card">
+            <div class="question-header">📌 Yêu cầu đề bài: Cài đặt giao tác "Thêm mặt hàng mới"</div>
+            <div class="question-body">
+                <span class="solution-title">🛠️ Giải pháp mã lệnh T-SQL Proc:</span>
+<pre>CREATE PROC sp_ThemMathang
+    @MaHG CHAR(10), @TenHG NVARCHAR(100), @DVT NVARCHAR(20), 
+    @Soluongton INT, @HangSX NVARCHAR(50), @TinhTrang NVARCHAR(50)
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRAN
+            INSERT INTO HANG(MAHG, TENHG, DVT, SOLUONGTON, HANGSX, TINHTRANG)
+            VALUES (@MaHG, @TenHG, @DVT, @Soluongton, @HangSX, @TinhTrang);
+        COMMIT TRAN
+        PRINT N'Thêm mặt hàng mới thành công!'
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRAN
+        PRINT N'Lỗi thêm mặt hàng mới: ' + ERROR_MESSAGE()
+    END CATCH
+END</pre>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">📌 Yêu cầu đề bài: Cài đặt giao tác "Thống kê danh sách các mặt hàng gần hết"</div>
+            <div class="question-body">
+                <span class="solution-title">🛠️ Giải pháp mã lệnh T-SQL Proc:</span>
+<pre>CREATE PROC sp_ThongKeHangGanHet
+    @HanMuc INT
+AS
+BEGIN
+    SELECT MAHG, TENHG, DVT, SOLUONGTON, HANGSX
+    FROM HANG
+    WHERE SOLUONGTON <= @HanMuc;
+END</pre>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">📌 Yêu cầu đề bài: Cài đặt giao tác "Lập phiếu nhập"</div>
+            <div class="question-body">
+                <span class="solution-title">🛠️ Giải pháp mã lệnh T-SQL Proc (Đảm bảo tính nhất quán giữa PN, CTPN và kho HANG):</span>
+<pre>CREATE PROC sp_LapPhieuNhap
+    @MaPN CHAR(10), @NgayNhap DATETIME, @MaNCC CHAR(10), @MaNV CHAR(10),
+    @MaHG CHAR(10), @Soluong INT, @GiaNhap MONEY
+AS
+BEGIN
+    DECLARE @ThanhTien MONEY = @Soluong * @GiaNhap;
+    BEGIN TRY
+        BEGIN TRAN
+            -- 1. Thêm thông tin vào bảng PhieuNhap nếu chưa tồn tại
+            IF NOT EXISTS (SELECT 1 FROM PHIEUNHAP WHERE MAPN = @MaPN)
+            BEGIN
+                INSERT INTO PHIEUNHAP(MAPN, NGAYNHAP, MANCC, MANV, TIENNHAP)
+                VALUES (@MaPN, @NgayNhap, @MaNCC, @MaNV, @ThanhTien);
+            END
+            ELSE
+            BEGIN
+                UPDATE PHIEUNHAP SET TIENNHAP = TIENNHAP + @ThanhTien WHERE MAPN = @MaPN;
+            END
+
+            -- 2. Thêm vào chi tiết phiếu nhập
+            INSERT INTO CHITIETPN(MAPN, MAHG, SOLUONG, GIANHAP, THANHTIEN)
+            VALUES (@MaPN, @MaHG, @Soluong, @GiaNhap, @ThanhTien);
+
+            -- 3. Cập nhật tự động tăng số lượng tồn kho của mặt hàng
+            UPDATE HANG SET SOLUONGTON = SOLUONGTON + @Soluong WHERE MAHG = @MaHG;
+        COMMIT TRAN
+        PRINT N'Lập phiếu nhập kho thành công!'
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRAN
+        PRINT N'Lỗi lập phiếu nhập kho: ' + ERROR_MESSAGE()
+    END CATCH
+END</pre>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">📌 Yêu cầu đề bài: Cài đặt giao tác "Cập nhật bảng giá các mặt hàng"</div>
+            <div class="question-body">
+                <span class="solution-title">🛠️ Giải pháp mã lệnh T-SQL Proc:</span>
+<pre>CREATE PROC sp_CapNhatGia
+    @MaHG CHAR(10), @GiaMoi MONEY
+AS
+BEGIN
+    BEGIN TRY
+        BEGIN TRAN
+            INSERT INTO DONGIA(MAHG, NGAYCN, GIA)
+            VALUES (@MaHG, GETDATE(), @GiaMoi);
+        COMMIT TRAN
+        PRINT N'Cập nhật giá mặt hàng thành công!'
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRAN
+        PRINT N'Lỗi cập nhật giá: ' + ERROR_MESSAGE()
+    END CATCH
+END</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nhân viên bán hàng -->
+    <div class="role-section">
+        <div class="role-name">✦ Đối với nhân viên bán hàng</div>
+
+        <div class="question-card">
+            <div class="question-header">📌 Yêu cầu đề bài: Cài đặt giao tác "Tra cứu thông tin mặt hàng"</div>
+            <div class="question-body">
+                <span class="solution-title">🛠️ Giải pháp mã lệnh T-SQL Proc (Truy vấn kèm giá mới nhất):</span>
+<pre>CREATE PROC sp_TraCuuMatHang
+    @MaHG CHAR(10)
+AS
+BEGIN
+    SELECT H.MAHG, H.TENHG, H.DVT, H.SOLUONGTON, DG.GIA AS GiaHienTai
+    FROM HANG H 
+    LEFT JOIN DONGIA DG ON H.MAHG = DG.MAHG
+    WHERE H.MAHG = @MaHG
+      AND DG.NGAYCN = (SELECT MAX(NGAYCN) FROM DONGIA WHERE MAHG = @MaHG);
+END</pre>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">📌 Yêu cầu đề bài: Cài đặt giao tác "Bán hàng"</div>
+            <div class="question-body">
+                <span class="solution-title">🛠️ Giải pháp mã lệnh T-SQL Proc (Kiểm tra tồn, lập HD, CTHD và trừ kho đồng bộ):</span>
+<pre>CREATE PROC sp_BanHang
+    @MaHD CHAR(10), @NgayDat DATETIME, @MaKH CHAR(10), @MaNV CHAR(10),
+    @MaHG CHAR(10), @SoluongBan INT, @GiaBan MONEY
+AS
+BEGIN
+    DECLARE @ThanhTien MONEY = @SoluongBan * @GiaBan;
+    DECLARE @TonKho INT;
+    BEGIN TRY
+        BEGIN TRAN
+            -- Kiểm tra số lượng tồn kho và khóa giữ dòng dữ liệu tránh tranh chấp
+            SELECT @TonKho = SOLUONGTON FROM HANG WITH (UPDLOCK) WHERE MAHG = @MaHG;
+            
+            IF @TonKho < @SoluongBan
+            BEGIN
+                RAISERROR(N'Số lượng hàng tồn kho không đủ để đáp ứng đơn hàng!', 16, 1);
+            END
+
+            -- Thêm thông tin vào bảng HoaDon nếu chưa tồn tại
+            IF NOT EXISTS (SELECT 1 FROM HOADON WHERE MAHD = @MaHD)
+            BEGIN
+                INSERT INTO HOADON(MAHD, NGAYDAT, MAKH, MANV, TIENBAN)
+                VALUES (@MaHD, @NgayDat, @MaKH, @MaNV, @ThanhTien);
+            END
+            ELSE
+            BEGIN
+                UPDATE HOADON SET TIENBAN = TIENBAN + @ThanhTien WHERE MAHD = @MaHD;
+            END
+
+            -- Thêm vào chi tiết hóa đơn
+            INSERT INTO CHITIETHD(MAHD, MAHG, SOLUONG, GIABAN, THANHTIEN)
+            VALUES (@MaHD, @MaHG, @SoluongBan, @GiaBan, @ThanhTien);
+
+            -- Tự động trừ bớt số lượng tồn kho của mặt hàng
+            UPDATE HANG SET SOLUONGTON = SOLUONGTON - @SoluongBan WHERE MAHG = @MaHG;
+        COMMIT TRAN
+        PRINT N'Thực hiện giao dịch bán hàng thành công!'
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRAN
+        PRINT N'Lỗi giao dịch bán hàng: ' + ERROR_MESSAGE()
+    END CATCH
+END</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quản lý -->
+    <div class="role-section">
+        <div class="role-name">✦ Đối với quản lý</div>
+        <div class="question-card">
+            <div class="question-header">📌 Yêu cầu đề bài: Cài đặt giao tác "Thống kê doanh thu bán hàng"</div>
+            <div class="question-body">
+                <span class="solution-title">🛠️ Giải pháp mã lệnh T-SQL Proc (Thống kê theo từng tháng trong năm):</span>
+<pre>CREATE PROC sp_ThongKeDoanhThuTheoThang
+    @Nam INT
+AS
+BEGIN
+    SELECT MONTH(NGAYDAT) AS Thang, SUM(TIENBAN) AS TongDoanhThu
+    FROM HOADON
+    WHERE YEAR(NGAYDAT) = @Nam
+    GROUP BY MONTH(NGAYDAT);
+END</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHẦN 2 -->
+    <div class="part-title">2) Giải quyết các tình huống tranh chấp đồng thời theo yêu cầu của đề bài</div>
+
+    <!-- Tình huống 1 -->
+    <div class="question-card">
+        <div class="case-header">
+            <span>Tình huống xung đột 1</span>
+            <span class="isolation-badge">READ COMMITTED</span>
+        </div>
+        <div class="question-body">
+            <strong style="color:var(--text-dark);">Đề bài yêu cầu:</strong> Nhân viên bán hàng tra cứu giá của một mặt hàng trong lúc nhân viên kho đang cập nhật giá mới cho mặt hàng đó.
+            <div class="grid-blocks">
+                <div class="dispute-box box-risk">
+                    <span class="box-title">⚠️ Nguy cơ / Rủi ro tranh chấp</span>
+                    Xảy ra hiện tượng <strong>Đọc dữ liệu rác (Dirty Read)</strong>. Nhân viên bán hàng có thể đọc phải một mức giá ảo đang sửa đổi dở dang của nhân viên kho nhưng chưa được commit. Nếu nhân viên kho rollback hủy lệnh cập nhật giá, thông tin giá bán áp cho khách hàng sẽ bị sai lệch hoàn toàn.
+                </div>
+                <div class="dispute-box box-solution">
+                    <span class="box-title">🛡️ Giải pháp xử lý trong SQL Server</span>
+                    Cấu hình mức cô lập giao tác tra cứu giá của nhân viên bán hàng về mức <span class="code-inline">READ COMMITTED</span> (đây cũng là mức cô lập mặc định). Giao tác đọc sẽ bị chặn lại cho đến khi nhân viên kho hoàn tất việc cập nhật và gọi lệnh <span class="code-inline">COMMIT</span>.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tình huống 2 -->
+    <div class="question-card">
+        <div class="case-header">
+            <span>Tình huống xung đột 2</span>
+            <span class="isolation-badge">UPDLOCK / XLOCK</span>
+        </div>
+        <div class="question-body">
+            <strong style="color:var(--text-dark);">Đề bài yêu cầu:</strong> Hai giao dịch bán hàng cùng tranh chấp số lượng tồn của một mặt hàng nào đó tại một thời điểm.
+            <div class="grid-blocks">
+                <div class="dispute-box box-risk">
+                    <span class="box-title">⚠️ Nguy cơ / Rủi ro tranh chấp</span>
+                    Xảy ra lỗi nghiêm trọng **Mất dữ liệu cập nhật (Lost Update)**. Cả hai nhân viên bán hàng cùng đọc ra số lượng tồn kho cũ (ví dụ: tồn = 1). Cả hai giao dịch đều nghĩ rằng còn đủ hàng nên tiến hành tạo hóa đơn bán và trừ kho. Giao tác hoàn tất sau ghi đè lên giao tác trước khiến số lượng tồn thực tế bị âm (tồn kho sai lệch).
+                </div>
+                <div class="dispute-box box-solution">
+                    <span class="box-title">🛡️ Giải pháp xử lý trong SQL Server</span>
+                    Sử dụng Locking hint <span class="code-inline">WITH (UPDLOCK)</span> hoặc <span class="code-inline">WITH (XLOCK)</span> ngay khi câu lệnh đọc check tồn kho trong thủ tục bán hàng thực thi. Khóa này sẽ chặn đứng giao dịch bán hàng thứ hai, bắt buộc phải đợi giao dịch thứ nhất kết thúc trừ kho rồi mới được vào đọc số lượng tồn mới.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tình huống 3 -->
+    <div class="question-card">
+        <div class="case-header">
+            <span>Tình huống xung đột 3</span>
+            <span class="isolation-badge">SERIALIZABLE</span>
+        </div>
+        <div class="question-body">
+            <strong style="color:var(--text-dark);">Đề bài yêu cầu:</strong> Nhân viên kho thống kê danh sách các mặt hàng gần hết (có số lượng tồn nhỏ hơn con số cụ thể nào đó) trong khi một giao tác bán hàng đang xảy ra.
+            <div class="grid-blocks">
+                <div class="dispute-box box-risk">
+                    <span class="box-title">⚠️ Nguy cơ / Rủi ro tranh chấp</span>
+                    Xảy ra lỗi **Không thể đọc lại dữ liệu (Unrepeatable Read)** hoặc **Bóng ma dữ liệu (Phantom Read)**. Trong khi nhân viên kho đang duyệt danh sách dở dang để làm báo cáo, giao tác bán hàng trừ bớt kho của mặt hàng khác khiến mặt hàng đó bất ngờ tụt xuống dưới mức hạn định, làm cho danh sách thống kê ở các trang sau bị thay đổi, báo cáo không đồng nhất dữ liệu.
+                </div>
+                <div class="dispute-box box-solution">
+                    <span class="box-title">🛡️ Giải pháp xử lý trong SQL Server</span>
+                    Nâng cấp cấp độ cô lập của giao tác thống kê kho của nhân viên kho lên mức tối đa <span class="code-inline">SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;</span>. Hệ quản trị sẽ giữ chặt khóa chia sẻ phạm vi (Range Lock) trên bảng <span class="code-inline">HANG</span>, cố định toàn bộ dữ liệu kho cho tới khi nhân viên kho kết xuất xong báo cáo.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tình huống 4 -->
+    <div class="question-card">
+        <div class="case-header">
+            <span>Tình huống xung đột 4</span>
+            <span class="isolation-badge">READ COMMITTED</span>
+        </div>
+        <div class="question-body">
+            <strong style="color:var(--text-dark);">Đề bài yêu cầu:</strong> Nhân viên bán hàng tra cứu số lượng tồn kho của mặt hàng trong lúc nhân viên kho đang nhập thêm mặt hàng đó vào kho.
+            <div class="grid-blocks">
+                <div class="dispute-box box-risk">
+                    <span class="box-title">⚠️ Nguy cơ / Rủi ro tranh chấp</span>
+                    Xảy ra lỗi **Đọc dữ liệu bẩn (Dirty Read)**. Nhân viên bán hàng nhìn thấy số lượng hàng tồn kho tăng vọt (do nhân viên kho đang làm phiếu nhập tạm thời chưa kiểm đếm xong hoặc chưa commit). Khi nhân viên bán hàng báo với khách còn hàng, đột nhiên nhân viên kho phát hiện hàng hỏng nên hủy phiếu nhập (<span class="code-inline">ROLLBACK</span>), hệ thống quay về số lượng cũ làm mất uy tín cửa hàng.
+                </div>
+                <div class="dispute-box box-solution">
+                    <span class="box-title">🛡️ Giải pháp xử lý trong SQL Server</span>
+                    Sử dụng mức cô lập <span class="code-inline">READ COMMITTED</span> cho phiên tra cứu của nhân viên bán hàng. Lệnh tra cứu tồn kho sẽ bị hoãn lại một vài giây cho đến khi nhân viên kho thực hiện lệnh lệnh <span class="code-inline">COMMIT</span> phiếu nhập thành công, số lượng hiển thị cho nhân viên bán hàng sẽ là số liệu thực tế 100%.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tình huống 5 -->
+    <div class="question-card">
+        <div class="case-header">
+            <span>Tình huống xung đột 5</span>
+            <span class="isolation-badge">SNAPSHOT ISOLATION</span>
+        </div>
+        <div class="question-body">
+            <strong style="color:var(--text-dark);">Đề bài yêu cầu:</strong> Quản lý thống kê doanh thu bán hàng trong lúc các giao tác bán hàng đang xảy ra.
+            <div class="grid-blocks">
+                <div class="dispute-box box-risk">
+                    <span class="box-title">⚠️ Nguy cơ / Rủi ro tranh chấp</span>
+                    Xảy ra hiện tượng **Bóng ma dữ liệu (Phantom Read)**. Người quản lý chạy lệnh tính tổng tiền liên tục thu được các con số khác nhau do các nhân viên bán hàng ở quầy liên tục tạo hóa đơn mới (<span class="code-inline">INSERT</span>), làm cho báo cáo doanh thu bị thay đổi liên tục, không thể chốt số liệu kế toán cố định tại một thời điểm.
+                </div>
+                <div class="dispute-box box-solution">
+                    <span class="box-title">🛡️ Giải pháp xử lý trong SQL Server</span>
+                    Giải pháp tối ưu và chuyên nghiệp nhất trong thực tế là kích hoạt mức cô lập dữ liệu ảnh chụp **`SNAPSHOT ISOLATION`** cho giao tác của quản lý. Người quản lý sẽ tính toán doanh thu dựa trên một bản sao (ảnh chụp) ổn định tại thời điểm bắt đầu gọi lệnh, trong khi đó các nhân viên bán hàng ở quầy vẫn chèn mới hóa đơn bình thường mà không bị khóa bảng gây tắc nghẽn hệ thống.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bổ sung: nội dung từ BaiTap5_5_QuanLyBanHang_Updated (Phần 2, ví dụ code ALTER) -->
+    <div class="part-title">2) Giải quyết các tình huống tranh chấp (Kèm Code Sửa Đổi)</div>
+
+    <!-- Tình huống 1 -->
+    <div class="question-card">
+        <div class="case-header">
+            <span>Tình huống xung đột 1</span>
+            <span class="isolation-badge">READ COMMITTED</span>
+        </div>
+        <div class="question-body">
+            <strong style="color:var(--text-dark);">Đề bài:</strong> Nhân viên bán hàng tra cứu giá của một mặt hàng trong lúc nhân viên kho đang cập nhật giá mới cho mặt hàng đó.
+            <div class="dispute-grid">
+                <div class="dispute-box box-risk">
+                    <span class="box-title">⚠️ Nguy cơ (Dirty Read)</span>
+                    Nhân viên bán hàng có thể đọc phải một mức giá ảo đang sửa đổi dở dang của nhân viên kho. Nếu nhân viên kho rollback hủy lệnh, thông tin giá bán áp cho khách hàng sẽ bị sai lệch hoàn toàn.
+                </div>
+                <div class="dispute-box box-solution">
+                    <span class="box-title">🛡️ Giải pháp & Mã lệnh khắc phục</span>
+                    Sửa đổi thủ tục tra cứu, ép giao tác chạy ở mức <span class="code-inline">READ COMMITTED</span> và đưa lệnh <span class="code-inline">SELECT</span> vào khối <span class="code-inline">BEGIN TRAN</span>. Lệnh đọc sẽ tự động bị chặn chờ đến khi kho <span class="code-inline">COMMIT</span>.
+                    
+                    <div class="code-snippet-box">
+<pre>ALTER PROC sp_TraCuuMatHang
+    @MaHG CHAR(10)
+AS
+BEGIN
+    -- Thiết lập mức cô lập tránh Dirty Read
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+    
+    BEGIN TRY
+        BEGIN TRAN
+            SELECT H.MAHG, H.TENHG, H.DVT, H.SOLUONGTON, DG.GIA AS GiaHienTai
+            FROM HANG H 
+            LEFT JOIN DONGIA DG ON H.MAHG = DG.MAHG
+            WHERE H.MAHG = @MaHG
+              AND DG.NGAYCN = (SELECT MAX(NGAYCN) FROM DONGIA WHERE MAHG = @MaHG);
+        COMMIT TRAN
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRAN
+        PRINT ERROR_MESSAGE()
+    END CATCH
+END</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tình huống 2 -->
+    <div class="question-card">
+        <div class="case-header">
+            <span>Tình huống xung đột 2</span>
+            <span class="isolation-badge">UPDLOCK / XLOCK</span>
+        </div>
+        <div class="question-body">
+            <strong style="color:var(--text-dark);">Đề bài:</strong> Hai giao dịch bán hàng cùng tranh chấp số lượng tồn của một mặt hàng nào đó tại một thời điểm.
+            <div class="dispute-grid">
+                <div class="dispute-box box-risk">
+                    <span class="box-title">⚠️ Nguy cơ (Lost Update)</span>
+                    Hai nhân viên cùng check thấy tồn kho = 1. Cả hai cùng lập hóa đơn và trừ kho. Giao tác sau ghi đè giao tác trước làm tồn kho thực tế bị âm.
+                </div>
+                <div class="dispute-box box-solution">
+                    <span class="box-title">🛡️ Giải pháp & Mã lệnh khắc phục</span>
+                    Sửa đổi thủ tục <span class="code-inline">sp_BanHang</span>, bổ sung <span class="code-inline">WITH (UPDLOCK)</span> vào câu lệnh <span class="code-inline">SELECT</span> kiểm tra tồn kho. Khóa này chặn ngay giao dịch thứ 2 ngay từ khâu kiểm tra.
+                    
+                    <div class="code-snippet-box">
+<pre>ALTER PROC sp_BanHang
+    @MaHD CHAR(10), @NgayDat DATETIME, @MaKH CHAR(10), @MaNV CHAR(10),
+    @MaHG CHAR(10), @SoluongBan INT, @GiaBan MONEY
+AS
+BEGIN
+    DECLARE @TonKho INT;
+    BEGIN TRY
+        BEGIN TRAN
+            -- Áp dụng khóa Cập nhật (UPDLOCK) để độc chiếm dòng dữ liệu
+            SELECT @TonKho = SOLUONGTON 
+            FROM HANG WITH (UPDLOCK) 
+            WHERE MAHG = @MaHG;
+            
+            IF @TonKho < @SoluongBan
+                RAISERROR(N'Không đủ hàng!', 16, 1);
+
+            -- (Các lệnh Insert hóa đơn, chi tiết hóa đơn...)
+
+            UPDATE HANG SET SOLUONGTON = SOLUONGTON - @SoluongBan WHERE MAHG = @MaHG;
+        COMMIT TRAN
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRAN
+    END CATCH
+END</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tình huống 3 -->
+    <div class="question-card">
+        <div class="case-header">
+            <span>Tình huống xung đột 3</span>
+            <span class="isolation-badge">SERIALIZABLE</span>
+        </div>
+        <div class="question-body">
+            <strong style="color:var(--text-dark);">Đề bài:</strong> Nhân viên kho thống kê danh sách các mặt hàng gần hết trong khi một giao tác bán hàng đang xảy ra.
+            <div class="dispute-grid">
+                <div class="dispute-box box-risk">
+                    <span class="box-title">⚠️ Nguy cơ (Phantom Read)</span>
+                    Kho đang quét danh sách, bán hàng chen vào trừ kho khiến một mặt hàng bất ngờ lọt xuống nhóm "gần hết" ở nửa sau của báo cáo, gây sai lệch số liệu dòng.
+                </div>
+                <div class="dispute-box box-solution">
+                    <span class="box-title">🛡️ Giải pháp & Mã lệnh khắc phục</span>
+                    Sửa đổi thủ tục thống kê của kho, nâng mức cô lập lên <span class="code-inline">SERIALIZABLE</span> để khóa toàn bộ dải dữ liệu đang quét.
+                    
+                    <div class="code-snippet-box">
+<pre>ALTER PROC sp_ThongKeHangGanHet
+    @HanMuc INT
+AS
+BEGIN
+    -- Mức cô lập cao nhất, khóa phạm vi (Range-key Lock)
+    SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+    
+    BEGIN TRAN
+        SELECT MAHG, TENHG, DVT, SOLUONGTON, HANGSX
+        FROM HANG
+        WHERE SOLUONGTON <= @HanMuc;
+    COMMIT TRAN
+END</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tình huống 4 -->
+    <div class="question-card">
+        <div class="case-header">
+            <span>Tình huống xung đột 4</span>
+            <span class="isolation-badge">READ COMMITTED</span>
+        </div>
+        <div class="question-body">
+            <strong style="color:var(--text-dark);">Đề bài:</strong> Nhân viên bán hàng tra cứu số lượng tồn kho của mặt hàng trong lúc nhân viên kho đang nhập thêm mặt hàng đó vào kho.
+            <div class="dispute-grid">
+                <div class="dispute-box box-risk">
+                    <span class="box-title">⚠️ Nguy cơ (Dirty Read)</span>
+                    Nhân viên bán hàng thấy số lượng tồn ảo do phiếu nhập đang tạo dở. Nếu kho rollback phiếu nhập, hàng sẽ không có thực để bán.
+                </div>
+                <div class="dispute-box box-solution">
+                    <span class="box-title">🛡️ Giải pháp & Mã lệnh khắc phục</span>
+                    Sử dụng thủ tục tra cứu hàng (đã khai báo <span class="code-inline">READ COMMITTED</span> ở Tình huống 1). Nó đảm bảo NV Bán hàng phải chờ NV Kho commit phiếu nhập xong mới thấy số tồn.
+                    
+                    <div class="code-snippet-box">
+<pre>-- (Áp dụng cùng thủ tục sp_TraCuuMatHang như Tình huống 1)
+-- Lệnh SELECT sẽ bị hệ thống tự động Block cho tới khi 
+-- thủ tục sp_LapPhieuNhap của kho chạm tới dòng lệnh COMMIT TRAN.</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tình huống 5 -->
+    <div class="question-card">
+        <div class="case-header">
+            <span>Tình huống xung đột 5</span>
+            <span class="isolation-badge">SNAPSHOT</span>
+        </div>
+        <div class="question-body">
+            <strong style="color:var(--text-dark);">Đề bài:</strong> Quản lý thống kê doanh thu bán hàng trong lúc các giao tác bán hàng đang xảy ra.
+            <div class="dispute-grid">
+                <div class="dispute-box box-risk">
+                    <span class="box-title">⚠️ Nguy cơ (Phantom Read)</span>
+                    Tổng tiền thay đổi liên tục do NV quầy liên tục tạo hóa đơn mới (<span class="code-inline">INSERT</span>), không thể chốt được một con số báo cáo chính xác tại một thời điểm.
+                </div>
+                <div class="dispute-box box-solution">
+                    <span class="box-title">🛡️ Giải pháp & Mã lệnh khắc phục</span>
+                    Nâng cấp hệ thống sử dụng <span class="code-inline">SNAPSHOT ISOLATION</span>. Quản lý sẽ tính toán trên ảnh chụp dữ liệu, không gây khóa bảng, NV quầy vẫn bán hàng bình thường.
+                    
+                    <div class="code-snippet-box">
+<pre>-- 1. Yêu cầu bật tính năng Snapshot cho Database (Cài đặt 1 lần)
+-- ALTER DATABASE QuanLyBanHang SET ALLOW_SNAPSHOT_ISOLATION ON;
+
+-- 2. Cập nhật thủ tục thống kê
+ALTER PROC sp_ThongKeDoanhThuTheoThang
+    @Nam INT
+AS
+BEGIN
+    -- Sử dụng cơ chế ảnh chụp phiên bản
+    SET TRANSACTION ISOLATION LEVEL SNAPSHOT;
+    
+    BEGIN TRAN
+        SELECT MONTH(NGAYDAT) AS Thang, SUM(TIENBAN) AS TongDoanhThu
+        FROM HOADON
+        WHERE YEAR(NGAYDAT) = @Nam
+        GROUP BY MONTH(NGAYDAT);
+    COMMIT TRAN
+END</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Bộ môn Hệ thống thông tin - Khoa CNTT - Trường Đại học Công Thương TP.HCM (HUIT)
+    </footer>
+</div>
+
+</body>
+</html>

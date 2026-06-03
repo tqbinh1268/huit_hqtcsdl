@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ĐỀ ÔN TẬP KHÁI QUÁT TOÀN DIỆN (CHƯƠNG 1, 2, 3) - ĐỀ 2</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.35;margin:14px;color:#111;background:#fff}
+    @page{size:A4;margin:15mm}
+    h1{color:#0b3c5d;font-size:18px;margin:0 0 6px}
+    .meta{color:#555;margin:2px 0;font-size:12px}
+    h2{color:#0b3c5d;font-size:15px;margin:14px 0 6px}
+    ol{margin-left:18px;padding-inline-start:18px}
+    li{margin-bottom:8px}
+    p{margin:6px 0}
+    .schema{background:#f8fafc;padding:10px 12px;border-left:4px solid #c7e0ff;margin:10px 0;color:#1f344f}
+    .student-info{margin:10px 0;display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px}
+    .student-info span{display:inline-block;width:220px;border-bottom:1px solid #000}
+    .schema p{margin:4px 0}
+    strong{font-weight:600}
+    .compact-list{margin-left:0;padding-left:16px}
+    .compact-list li{margin-bottom:6px}
+    .small-text{font-size:12px;color:#4b5563}
+    @media print{body{margin:0} .student-info{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <h1>ĐỀ ÔN TẬP KHÁI QUÁT TOÀN DIỆN (CHƯƠNG 1, 2, 3) - ĐỀ 2</h1>
+  <div class="meta">Môn học: Hệ quản trị cơ sở dữ liệu · Đối tượng: Sinh viên ngành Công nghệ thông tin (HUIT)</div>
+  <div class="meta"><strong>Thời gian làm bài:</strong> 75 phút (Không sử dụng tài liệu)</div>
+
+  <div class="student-info">
+    STT: <span class="line"></span>
+    &nbsp;&nbsp;Họ và tên: <span class="line"></span>
+    &nbsp;&nbsp;MSSV: <span class="line"></span>
+    &nbsp;&nbsp;Lớp: <span class="line"></span>
+  </div>
+
+  <div class="schema">
+    <strong>MÔ TẢ BÀI TOÁN DÙNG CHUNG (CƠ SỞ DỮ LIỆU "QL_BANHANG")</strong>
+    <p>Hệ thống quản lý bán hàng trực tuyến gồm các lược đồ quan hệ sau (Khóa chính được gạch dưới):</p>
+    <p>
+      KHACHHANG (<u>MaKH</u>, HoTen, Email, LoaiKH, NgayDangKy)<br>
+      SANPHAM (<u>MaSP</u>, TenSP, NhomSP, TinhTrang, GiaBan)<br>
+      DONHANG (<u>MaDH</u>, NgayDat, NgayGiaoDuKien, TrangThai, MaKH)<br>
+      CT_DONHANG (<u>MaDH</u>, <u>MaSP</u>, SoLuong, DonGia)
+    </p>
+    <p>Diễn giải miền dữ liệu: LoaiKH (Cá nhân, Doanh nghiệp, Đại lý), TinhTrang (Còn hàng, Hết hàng, Ngưng kinh doanh), TrangThai (Chưa giao, Đã giao, Đã hủy).</p>
+  </div>
+
+  <h2>Part I: Lý Thuyết Hệ Thống & Lập Trình Cơ Bản (3.0 điểm)</h2>
+  <ol>
+    <li>
+      <strong>Câu 1 (1.5 điểm) - Chương 1 &amp; Chương 2:</strong>
+      <ol>
+        <li><strong>(0.5đ)</strong> Trình bày khác biệt giữa cấu trúc vật lý và cấu trúc logic của cơ sở dữ liệu trong SQL Server. Cho biết tại sao nên sử dụng nhiều tệp dữ liệu và tệp nhật ký.</li>
+        <li><strong>(0.5đ)</strong> Nêu hai ưu điểm chính của mô hình Client – Server so với mô hình xử lý dữ liệu cục bộ truyền thống trong các ứng dụng bán hàng trực tuyến.</li>
+        <li><strong>(0.5đ)</strong> Trình bày vai trò của các dịch vụ phụ trợ trong SQL Server: Integration Services (SSIS), Analysis Services (SSAS) và Reporting Services (SSRS).</li>
+      </ol>
+    </li>
+
+    <li>
+      <strong>Câu 2 (1.5 điểm) - Chương 3:</strong>
+      <ol>
+        <li><strong>(0.5đ)</strong> Giải thích biến hệ thống trong T-SQL là gì và nêu ứng dụng của ba biến hệ thống: @@ERROR, @@ROWCOUNT, @@FETCH_STATUS.</li>
+        <li><strong>(0.5đ)</strong> Phân biệt Hàm vô hướng (Scalar Function) và Hàm bảng nội tuyến (Inline Table-valued Function) về cấu trúc và giá trị trả về.</li>
+        <li><strong>(0.5đ)</strong> Định nghĩa Trigger và nêu sự khác biệt giữa AFTER Trigger và INSTEAD OF Trigger trong SQL Server.</li>
+      </ol>
+    </li>
+  </ol>
+
+  <h2>Part II: Bài Tập Thực Hành Lập Trình T-SQL (7.0 điểm)</h2>
+  <ol start="3">
+    <li>
+      <strong>Câu 3 (1.5 điểm) - Kiến tạo CSDL Vật lý & Bảng ảo (Chương 2):</strong>
+      <ol>
+        <li><strong>(1.0đ)</strong> Viết lệnh T-SQL tạo cơ sở dữ liệu QL_BANHANG lưu tại thư mục D:\\Database với cấu trúc tệp tin vật lý như sau:
+          <ul class="compact-list">
+            <li>Primary data file: tên logic sales_primary_logic, tên vật lý sales_primary_physical.mdf, dung lượng khởi tạo 120MB, tối đa 360MB, tăng trưởng 10%.</li>
+            <li>Secondary data file: tên logic sales_sec_logic, tên vật lý sales_sec_physical.ndf, dung lượng khởi tạo 60MB, tối đa 180MB, tăng trưởng 10%.</li>
+            <li>Transaction log file: tên logic sales_log_logic, tên vật lý sales_log_physical.ldf, dung lượng khởi tạo 50MB, tối đa 250MB, tăng trưởng 5%.</li>
+          </ul>
+        </li>
+        <li><strong>(0.5đ)</strong> Viết lệnh T-SQL tạo View có tên v_KhachHangNo hiển thị MaKH, HoTen và TongNo (tổng tiền đơn hàng chưa giao của khách hàng). Công thức tính mỗi dòng chi tiết là: SoLuong x DonGia.</li>
+      </ol>
+    </li>
+
+    <li>
+      <strong>Câu 4 (1.0 điểm) - Lập trình Hàm tự định nghĩa (Chương 3):</strong>
+      <p>Viết một hàm nội tuyến (Inline Table-valued Function) tên là fn_DanhSachDonHang nhận hai tham số @thang và @nam. Hàm trả về danh sách các đơn hàng trong tháng và năm đó, chỉ gồm sản phẩm có NhomSP = N'Điện tử'. Thông tin trả về: MaDH, NgayDat, NgayGiaoDuKien, HoTen, TenSP.</p>
+    </li>
+
+    <li>
+      <strong>Câu 5 (1.5 điểm) - Lập trình Thủ tục thường trú (Chương 3):</strong>
+      <p>Viết thủ tục sp_HuyDonHang nhận tham số @madh. Thủ tục cần:</p>
+      <ul class="compact-list">
+        <li>Chỉ cho phép hủy khi trạng thái hiện tại của đơn hàng là N'Chưa giao'.</li>
+        <li>Ngày hủy (GETDATE()) phải trước NgayGiaoDuKien ít nhất 1 ngày.</li>
+        <li>Nếu thỏa: cập nhật TrangThai = N'Đã hủy' trên DONHANG, cập nhật TinhTrang các sản phẩm liên quan trong CT_DONHANG về N'Còn hàng' trên bảng SANPHAM, rồi RETURN 0.</li>
+        <li>Nếu không thỏa: không cập nhật gì và RETURN 1.</li>
+      </ul>
+    </li>
+
+    <li>
+      <strong>Câu 6 (1.5 điểm) - Lập trình Trigger DML nâng cao (Chương 3):</strong>
+      <p>Viết Trigger trg_KiemTraGiaBan trên CT_DONHANG cho sự kiện INSERT, UPDATE. Trigger cần:</p>
+      <ul class="compact-list">
+        <li>Kiểm tra khi cột DonGia được thêm hoặc sửa (IF UPDATE(DonGia)).</li>
+        <li>So sánh DonGia mới với 80% giá niêm yết GiaBan của sản phẩm trong bảng SANPHAM.</li>
+        <li>Nếu DonGia &lt; 80% Giá niêm yết, thực hiện ROLLBACK TRANSACTION và thông báo lỗi, không cho phép lệnh hoàn tất.</li>
+      </ul>
+    </li>
+
+    <li>
+      <strong>Câu 7 (1.5 điểm) - Lập trình Cursor tuần tự (Chương 3):</strong>
+      <p>Viết script T-SQL dùng Cursor duyệt qua các sản phẩm trong bảng SANPHAM. Với mỗi sản phẩm, tính tổng số đơn hàng thành công trong năm hiện tại (từ các đơn hàng có trạng thái N'Đã giao'). Cập nhật lại NhomSP dựa trên tần suất:</p>
+      <ul class="compact-list">
+        <li>Nếu tổng lượt bán &gt; 20: cập nhật NhomSP = N'Điện tử'.</li>
+        <li>Nếu tổng lượt bán từ 10 đến 20: cập nhật NhomSP = N'Tiện ích'.</li>
+        <li>Khác: giữ nguyên nhóm sản phẩm hiện tại.</li>
+      </ul>
+    </li>
+  </ol>
+
+  <p class="small-text"><em>Ghi chú:</em> Đây là đề ôn tập tổng quan cho các chương 1–3, tập trung vào kiến thức hệ thống, cấu trúc vật lý/logic, và kỹ năng lập trình T-SQL. Sinh viên làm bài trên giấy, viết rõ họ tên và mã số sinh viên ở góc trên trang và nộp bản giấy.</p>
+</body>
+</html>
