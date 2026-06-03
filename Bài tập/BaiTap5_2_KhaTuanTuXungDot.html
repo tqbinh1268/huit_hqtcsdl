@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lời giải Bài tập 5.2 - Hệ Quản Trị Cơ Sở Dữ Liệu</title>
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --secondary-color: #2563eb;
+            --success-color: #16a34a;
+            --danger-color: #dc2626;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-dark: #0f172a;
+            --border-color: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            border-bottom: 3px double var(--secondary-color);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--text-dark);
+            font-size: 26px;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: var(--text-main);
+            font-size: 15px;
+            margin: 0;
+            font-style: italic;
+        }
+
+        .theory-box {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--primary-color);
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .theory-title {
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 13px;
+            display: block;
+        }
+
+        .schedule-section {
+            margin-bottom: 35px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .schedule-title {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .schedule-body {
+            padding: 20px;
+        }
+
+        h3 {
+            color: var(--text-dark);
+            font-size: 15px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+
+        ul {
+            margin: 0 0 15px 0;
+            padding-left: 20px;
+            font-size: 14px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        .graph-representation {
+            background-color: #fafafa;
+            border: 1px dashed #94a3b8;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            color: #0284c7;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .badge-success {
+            background-color: #dcfce7;
+            color: var(--success-color);
+        }
+
+        .badge-danger {
+            background-color: #fee2e2;
+            color: var(--danger-color);
+        }
+
+        .conclusion-block {
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .conclusion-block-success {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .conclusion-block-danger {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .code-snippet {
+            background-color: #f1f5f9;
+            color: #be185d;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Bài tập 5.2 - Xét tính khả tuần tự xung đột</h1>
+        <p class="subtitle">Môn học: Hệ Quản Trị Cơ Sở Dữ Liệu</p>
+    </div>
+
+    <div style="text-align:center; margin-bottom:30px;">
+        <img src="Bai5_2.png" alt="Bài 5.2 - Hình minh họa" style="max-width:100%; height:auto; border:1px solid #cbd5e1; border-radius:10px; box-shadow:0 6px 18px rgba(15,23,42,0.08);">
+    </div>
+
+    <div class="theory-box">
+        <span class="theory-title">💡 Quy tắc xét đồ thị trình tự (Precedence Graph)</span>
+        Hai thao tác thuộc hai giao tác khác nhau xung đột nếu cùng thao tác trên một mục dữ liệu và có ít nhất một thao tác là <strong>Ghi (Write)</strong>. Thứ tự thao tác trước/sau quyết định hướng mũi tên từ <span class="code-snippet">Ti → Tj</span>. Nếu đồ thị không chứa chu trình thì lịch biểu đó đạt tính khả tuần tự xung đột.
+    </div>
+
+    <!-- S1 -->
+    <div class="schedule-section">
+        <div class="schedule-title">
+            <span>Lịch biểu S₁ = { w₁(A), r₂(A), r₃(A), w₄(A) }</span>
+            <span class="badge badge-success">Khả tuần tự</span>
+        </div>
+        <div class="schedule-body">
+            <h3>1. Phân tích các cặp xung đột trên dữ liệu A</h3>
+            <ul>
+                <li><span class="code-snippet">w₁(A)</span> xuất hiện trước và xung đột với <span class="code-snippet">r₂(A)</span> → Tạo cung: <span class="code-snippet">T₁ → T₂</span></li>
+                <li><span class="code-snippet">w₁(A)</span> xuất hiện trước và xung đột với <span class="code-snippet">r₃(A)</span> → Tạo cung: <span class="code-snippet">T₁ → T₃</span></li>
+                <li><span class="code-snippet">w₁(A)</span> xuất hiện trước và xung đột với <span class="code-snippet">w₄(A)</span> → Tạo cung: <span class="code-snippet">T₁ → T₄</span></li>
+                <li><span class="code-snippet">r₂(A)</span> xuất hiện trước và xung đột với <span class="code-snippet">w₄(A)</span> → Tạo cung: <span class="code-snippet">T₂ → T₄</span></li>
+                <li><span class="code-snippet">r₃(A)</span> xuất hiện trước và xung đột với <span class="code-snippet">w₄(A)</span> → Tạo cung: <span class="code-snippet">T₃ → T₄</span></li>
+            </ul>
+
+            <h3>2. Đồ thị trình tự P(S₁)</h3>
+            <div class="graph-representation">
+                Tập đỉnh: V = { T₁, T₂, T₃, T₄ }<br>
+                Tập cung: E = { (T₁ → T₂), (T₁ → T₃), (T₁ → T₄), (T₂ → T₄), (T₃ → T₄) }
+            </div>
+
+            <div class="conclusion-block conclusion-block-success">
+                👉 Kết luận: Đồ thị không có chu trình. Lịch biểu S₁ KHẢ TUẦN TỰ XUNG ĐỘT.<br>
+                Thứ tự tuần tự tương đương: (T₁, T₂, T₃, T₄) hoặc (T₁, T₃, T₂, T₄).
+            </div>
+        </div>
+    </div>
+
+    <!-- S2 -->
+    <div class="schedule-section">
+        <div class="schedule-title">
+            <span>Lịch biểu S₂ = { r₁(A), w₂(A), w₁(A), w₃(A), r₂(A) }</span>
+            <span class="badge badge-danger">Không khả tuần tự</span>
+        </div>
+        <div class="schedule-body">
+            <h3>1. Phân tích các cặp xung đột trên dữ liệu A</h3>
+            <ul>
+                <li><span class="code-snippet">r₁(A)</span> xuất hiện trước và xung đột với <span class="code-snippet">w₂(A)</span> → Tạo cung: <span class="code-snippet">T₁ → T₂</span></li>
+                <li><span class="code-snippet">w₂(A)</span> xuất hiện trước và xung đột với <span class="code-snippet">w₁(A)</span> → Tạo cung: <span class="code-snippet">T₂ → T₁</span> <span style="color:var(--danger-color); font-weight:bold;">(Phát hiện chu trình)</span></li>
+                <li><span class="code-snippet">w₁(A)</span> xuất hiện trước và xung đột với <span class="code-snippet">w₃(A)</span> → Tạo cung: <span class="code-snippet">T₁ → T₃</span></li>
+                <li><span class="code-snippet">w₃(A)</span> xuất hiện trước và xung đột với <span class="code-snippet">r₂(A)</span> → Tạo cung: <span class="code-snippet">T₃ → T₂</span></li>
+            </ul>
+
+            <h3>2. Đồ thị trình tự P(S₂)</h3>
+            <div class="graph-representation">
+                Tập đỉnh: V = { T₁, T₂, T₃ }<br>
+                Tập cung: E = { (T₁ → T₂), (T₂ → T₁), (T₁ → T₃), (T₃ → T₂) }
+            </div>
+
+            <div class="conclusion-block conclusion-block-danger">
+                👉 Kết luận: Đồ thị xuất hiện chu trình đóng giữa hai đỉnh (T₁ ⇄ T₂). Lịch biểu S₂ KHÔNG KHẢ TUẦN TỰ XUNG ĐỘT.
+            </div>
+        </div>
+    </div>
+
+    <!-- S3 -->
+    <div class="schedule-section">
+        <div class="schedule-title">
+            <span>Lịch biểu S₃ = { r₂(B), w₂(A), r₁(A), r₃(A), w₁(B), w₂(B), w₃(B) }</span>
+            <span class="badge badge-danger">Không khả tuần tự</span>
+        </div>
+        <div class="schedule-body">
+            <h3>1. Phân tích các cặp xung đột</h3>
+            <ul>
+                <li><strong>Mục dữ liệu A:</strong> <span class="code-snippet">w₂(A)</span> trước <span class="code-snippet">r₁(A)</span>, <span class="code-snippet">r₃(A)</span> → Tạo cung: <span class="code-snippet">T₂ → T₁</span> và <span class="code-snippet">T₂ → T₃</span></li>
+                <li><strong>Mục dữ liệu B:</strong> <span class="code-snippet">r₂(B)</span> trước <span class="code-snippet">w₁(B)</span>, <span class="code-snippet">w₃(B)</span> → Tạo cung: <span class="code-snippet">T₂ → T₁</span> và <span class="code-snippet">T₂ → T₃</span></li>
+                <li><strong>Mục dữ liệu B:</strong> <span class="code-snippet">w₁(B)</span> trước <span class="code-snippet">w₂(B)</span> → Tạo cung: <span class="code-snippet">T₁ → T₂</span> <span style="color:var(--danger-color); font-weight:bold;">(Phát hiện chu trình)</span></li>
+                <li><strong>Mục dữ liệu B:</strong> <span class="code-snippet">w₂(B)</span> trước <span class="code-snippet">w₃(B)</span> → Tạo cung: <span class="code-snippet">T₂ → T₃</span></li>
+            </ul>
+
+            <h3>2. Đồ thị trình tự P(S₃)</h3>
+            <div class="graph-representation">
+                Tập đỉnh: V = { T₁, T₂, T₃ }<br>
+                Tập cung: E = { (T₂ → T₁), (T₂ → T₃), (T₁ → T₂) }
+            </div>
+
+            <div class="conclusion-block conclusion-block-danger">
+                👉 Kết luận: Đồ thị chứa chu trình tương tranh tương hỗ giữa (T₁ ⇄ T₂). Lịch biểu S₃ KHÔNG KHẢ TUẦN TỰ XUNG ĐỘT.
+            </div>
+        </div>
+    </div>
+
+    <!-- S4 -->
+    <div class="schedule-section">
+        <div class="schedule-title">
+            <span>Lịch biểu S₄ = { r₂(A), r₁(B), w₂(A), r₃(A), w₁(B), r₂(B), w₂(B) }</span>
+            <span class="badge badge-success">Khả tuần tự</span>
+        </div>
+        <div class="schedule-body">
+            <h3>1. Phân tích các cặp xung đột</h3>
+            <ul>
+                <li><strong>Mục dữ liệu A:</strong> <span class="code-snippet">w₂(A)</span> xuất hiện trước và xung đột với <span class="code-snippet">r₃(A)</span> → Tạo cung: <span class="code-snippet">T₂ → T₃</span></li>
+                <li><strong>Mục dữ liệu B:</strong> <span class="code-snippet">r₁(B)</span> xuất hiện trước và xung đột với <span class="code-snippet">w₂(B)</span> → Tạo cung: <span class="code-snippet">T₁ → T₂</span></li>
+                <li><strong>Mục dữ liệu B:</strong> <span class="code-snippet">w₁(B)</span> xuất hiện trước và xung đột với <span class="code-snippet">r₂(B)</span>, <span class="code-snippet">w₂(B)</span> → Tạo cung: <span class="code-snippet">T₁ → T₂</span></li>
+            </ul>
+
+            <h3>2. Đồ thị trình tự P(S₄)</h3>
+            <div class="graph-representation">
+                Tập đỉnh: V = { T₁, T₂, T₃ }<br>
+                Tập cung: E = { (T₁ → T₂), (T₂ → T₃) }
+            </div>
+
+            <div class="conclusion-block conclusion-block-success">
+                👉 Kết luận: Đồ thị là một đường đi thẳng vô chu trình theo hướng T₁ → T₂ → T₃. Lịch biểu S₄ KHẢ TUẦN TỰ XUNG ĐỘT.<br>
+                Thứ tự tuần tự tương đương duy nhất: (T₁, T₂, T₃).
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Đại học Công Thương Thành phố Hồ Chí Minh (HUIT) - Khoa CNTT
+    </footer>
+</div>
+
+</body>
+</html>
