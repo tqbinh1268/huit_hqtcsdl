@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề Kiểm Tra Thực Hành Số 2 - HUIT TH HQT CSDL</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #fcfcfc;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #003366;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .header-info {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .header-info p {
+            margin: 5px 0;
+            font-weight: 500;
+        }
+        h2 {
+            color: #004080;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #222;
+            margin-top: 25px;
+        }
+        p {
+            margin-bottom: 10px;
+        }
+        ul, ol {
+            margin-top: 5px;
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .code {
+            font-family: Consolas, "Courier New", monospace;
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d14;
+            font-size: 0.95em;
+        }
+        .pts {
+            font-weight: bold;
+            color: #c0392b;
+        }
+        .note {
+            font-style: italic;
+            color: #666;
+            background-color: #fff9e6;
+            padding: 5px 10px;
+            border-left: 3px solid #f1c40f;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .rubric {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-left: 4px solid #0059b3;
+            padding: 20px;
+            margin-top: 40px;
+            border-radius: 4px;
+        }
+        .rubric h3 {
+            margin-top: 0;
+            color: #004080;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ĐỀ KIỂM TRA THỰC HÀNH SỐ 2</h1>
+        <div class="header-info">
+            <p><strong>Môn học:</strong> Thực hành Hệ quản trị Cơ sở dữ liệu</p>
+            <p><strong>Nội dung:</strong> Chương 3 & 4 (Bảo mật, Giao dịch, View/Index, Quản trị)</p>
+            <p><strong>Thời gian làm bài:</strong> 60 phút (Thực hành trực tiếp trên SQL Server)</p>
+        </div>
+
+        <p><a href="De_Kiem_Tra_Thuc_Hanh_2_60p.pdf" download style="display:inline-block;margin-bottom:20px;padding:10px 16px;background:#004080;color:#fff;border-radius:6px;text-decoration:none;font-weight:700;">Tải xuống PDF đề thi (60 phút)</a></p>
+
+        <h2>MÔ TẢ BÀI TOÁN: QUẢN LÝ ĐẶT PHÒNG KHÁCH SẠN</h2>
+        <p>Một khách sạn cần quản lý việc đặt phòng của khách hàng. Hệ thống cơ sở dữ liệu đơn giản gồm 3 bảng chính:</p>
+        <ul>
+            <li><span class="code">KhachHang(MaKH, TenKH, SoDienThoai, LoaiKH)</span></li>
+            <li><span class="code">Phong(MaPhong, LoaiPhong, GiaTheoNgay, TrangThai)</span></li>
+            <li><span class="code">DatPhong(MaDat, MaKH, MaPhong, NgayNhan, NgayTra, TongTien)</span></li>
+        </ul>
+
+        <h2>PHẦN 1: TẠO BẢNG, VIEW, RÀNG BUỘC KHÓA, NHẬP LIỆU <span class="pts">(2.0 điểm - PLO3 CLO1)</span></h2>
+        <p>Viết các lệnh T-SQL để thực hiện:</p>
+        <ol>
+            <li>Tạo cơ sở dữ liệu <span class="code">QL_DatPhong_KS</span>.</li>
+            <li>Tạo các bảng <span class="code">KhachHang</span>, <span class="code">Phong</span>, <span class="code">DatPhong</span> với:
+                <ul>
+                    <li>Khóa chính và khóa ngoại phù hợp.</li>
+                    <li>Các ràng buộc CHECK cho <span class="code">LoaiKH</span>, <span class="code">GiaTheoNgay</span>, <span class="code">TrangThai</span>, <span class="code">NgayTra >= NgayNhan</span>.</li>
+                    <li>Giá trị mặc định cho <span class="code">LoaiKH</span> là 'Dong'.</li>
+                </ul>
+            </li>
+            <li>Tạo một <strong>View</strong> tên <span class="code">v_DatPhong_HopLe</span> hiển thị thông tin đặt phòng, tên khách hàng và loại phòng.</li>
+            <li>Nhập dữ liệu mẫu tối thiểu 3 dòng cho mỗi bảng (cột <span class="code">TongTien</span> có thể đặt tạm thời là 0 đối với các bản ghi mới).</li>
+        </ol>
+
+        <h2>PHẦN 2: SAO LƯU VÀ PHỤC HỒI CƠ SỞ DỮ LIỆU <span class="pts">(3.0 điểm - PLO3 CLO1)</span></h2>
+        <p>Viết các câu lệnh T-SQL để:</p>
+        <ol>
+            <li>Thực hiện <strong>Full Backup</strong> cơ sở dữ liệu <span class="code">QL_DatPhong_KS</span> vào một file đích trên ổ đĩa.</li>
+            <li>Thực hiện lệnh <strong>Restore</strong> từ file backup sang một cơ sở dữ liệu mới tên <span class="code">QL_DatPhong_KS_PhucHoi</span>.</li>
+            <li>Ghi rõ các bước kiểm tra tính toàn vẹn dữ liệu sau khi phục hồi.</li>
+        </ol>
+
+        <h2>PHẦN 3: QUẢN LÝ NGƯỜI DÙNG <span class="pts">(3.0 điểm - PLO3 CLO1)</span></h2>
+        <p>Viết các lệnh thực hiện:</p>
+        <ol>
+            <li>Tạo Login <span class="code">GhiDanh_User</span> với mật khẩu an toàn và tạo User tương ứng cho cơ sở dữ liệu <span class="code">QL_DatPhong_KS</span>.</li>
+            <li>Tạo Role <span class="code">r_NhanVienDatPhong</span> và phân quyền cho Role được phép <span class="code">SELECT</span>, <span class="code">INSERT</span> trên bảng <span class="code">KhachHang</span>, <span class="code">Phong</span>, <span class="code">DatPhong</span>.</li>
+            <li>Thêm User <span class="code">GhiDanh_User</span> vào Role vừa tạo và mô tả cách kiểm tra quyền truy cập.</li>
+        </ol>
+
+        <h2>PHẦN 4: PHÂN TÍCH YÊU CẦU VÀ ĐỀ XUẤT HƯỚNG XỬ LÝ VẤN ĐỀ TRONG QUẢN TRỊ CƠ SỞ DỮ LIỆU <span class="pts">(2.0 điểm - PLO8 CLO3)</span></h2>
+        <p>Viết một đoạn văn ngắn (khoảng 5-7 câu) trình bày:</p>
+        <ul>
+            <li>Các yêu cầu chính cần được đáp ứng khi quản lý hệ thống đặt phòng khách sạn.</li>
+            <li>Giải pháp quản trị dữ liệu để đảm bảo an toàn, nhất quán và hiệu suất.</li>
+            <li>Cách xử lý tình huống phát sinh lỗi trong giao dịch đặt phòng và phục hồi dữ liệu.</li>
+        </ul>
+
+        <div class="rubric">
+            <h3>2. Rubric đánh giá bài kiểm tra số 2 (thực hành trên máy)</h3>
+            <table style="width:100%;border-collapse:collapse;text-align:center;">
+                <thead>
+                    <tr>
+                        <th style="border:1px solid #000;padding:8px;">Tiêu chí đánh giá</th>
+                        <th style="border:1px solid #000;padding:8px;">PLO</th>
+                        <th style="border:1px solid #000;padding:8px;">CLO</th>
+                        <th style="border:1px solid #000;padding:8px;">Trọng số</th>
+                        <th style="border:1px solid #000;padding:8px;">10 - 8.5</th>
+                        <th style="border:1px solid #000;padding:8px;">8.4 - 7.0</th>
+                        <th style="border:1px solid #000;padding:8px;">6.9 - 5.5</th>
+                        <th style="border:1px solid #000;padding:8px;">5.4 - 4.0</th>
+                        <th style="border:1px solid #000;padding:8px;">3.9 - 0.0</th>
+                        <th style="border:1px solid #000;padding:8px;">Điểm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Tạo bảng, view, ràng buộc khóa, nhập liệu</td>
+                        <td style="border:1px solid #000;padding:8px;">PLO3</td>
+                        <td style="border:1px solid #000;padding:8px;">CLO1</td>
+                        <td style="border:1px solid #000;padding:8px;">20%</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 80% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 60%-80% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 40%-60% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 20%-40% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng dưới 20% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;">2.0</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Sao lưu và phục hồi cơ sở dữ liệu</td>
+                        <td style="border:1px solid #000;padding:8px;">PLO3</td>
+                        <td style="border:1px solid #000;padding:8px;">CLO1</td>
+                        <td style="border:1px solid #000;padding:8px;">30%</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 80% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 60%-80% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 40%-60% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 20%-40% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng dưới 20% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;">3.0</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Quản lý người dùng</td>
+                        <td style="border:1px solid #000;padding:8px;">PLO3</td>
+                        <td style="border:1px solid #000;padding:8px;">CLO1</td>
+                        <td style="border:1px solid #000;padding:8px;">30%</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 80% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 60%-80% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 40%-60% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 20%-40% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng dưới 20% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;">3.0</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Phân tích yêu cầu và đề xuất hướng xử lý vấn đề trong quản trị cơ sở dữ liệu</td>
+                        <td style="border:1px solid #000;padding:8px;">PLO8</td>
+                        <td style="border:1px solid #000;padding:8px;">CLO3</td>
+                        <td style="border:1px solid #000;padding:8px;">20%</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 80% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 60%-80% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 40%-60% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng trên 20%-40% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;text-align:left;">Đáp ứng dưới 20% yêu cầu</td>
+                        <td style="border:1px solid #000;padding:8px;">2.0</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="9" style="border:1px solid #000;padding:8px;text-align:right;font-weight:bold;">ĐIỂM TỔNG</td>
+                        <td style="border:1px solid #000;padding:8px;font-weight:bold;">10</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
