@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Ôn Tập Tương Tác: Chương 4 & 5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Nordic Teal & Slate Dark (Lấy tone nền sáng Slate nhẹ nhàng #f8fafc, kết hợp màu mỏ neo xanh Teal sâu lắng #0d9488 cho các khu vực tương tác, cùng với các màu trạng thái Emerald/Rose tạo điểm nhấn sắc nét và cao cấp). -->
+    <!-- Application Structure Plan: 
+        Ứng dụng được thiết kế theo cấu trúc Tab-based Dashboard tối ưu hóa khả năng tiêu thụ thông tin phi tuyến tính. Hệ thống bao gồm 5 khu vực chính:
+        1. "Tổng Quan": Biểu đồ phân tách trọng tâm ôn tập của Chương 4 & 5 giúp sinh viên định vị phần kiến thức cần tập trung.
+        2. "Phân Quyền Tương Tác": Công cụ trực quan giúp sinh viên chọn bảng, quyền hạn (Select/Insert/Update), thiết lập Login/User và tự động sinh mã SQL Server chuẩn hoá thời gian thực.
+        3. "Mô Phỏng Phục Hồi": Trục thời gian (Timeline) động mô tả quy trình thảm họa mất dữ liệu vật lý và hướng dẫn từng bước khôi phục (Tail-log, Full, Diff, Log Restore) kèm giải thích cơ chế khóa NORECOVERY.
+        4. "Đồ Thị Tuần Tự & Xung Đột": Trình giải lịch biểu tương tác cao, vẽ trực quan Precedence Graph lên Canvas dựa trên các mẫu kịch bản tương tranh phức tạp trong kiểm tra, tính toán chu trình để kết luận tính khả tuần tự xung đột.
+        5. "Học Chủ Động (Active Recall)": Tập hợp các câu hỏi lý thuyết cốt lõi của Chương 4, 5 dưới dạng thẻ xếp gọn đóng/mở nhằm kích thích khả năng tự phục hồi trí nhớ.
+    -->
+    <!-- Visualization & Content Choices:
+        - Phân bổ trọng tâm ôn tập -> Mục tiêu: Thông tin tỉ lệ kiến thức -> Dùng Chart.js Doughnut Chart -> Hover xem chi tiết.
+        - Trục thời gian khôi phục thảm họa -> Mục tiêu: Mô tả trình tự thời gian phức tạp -> Dùng HTML CSS Timeline kết hợp hiệu ứng thay đổi trạng thái giao diện bằng JS để hiển thị kịch bản khôi phục và code lệnh SQL tương ứng.
+        - Phân tích tương tranh xung đột & Đồ thị tuần tự -> Mục tiêu: Trực quan hóa mối quan hệ toán học và cấu trúc đồ thị -> Dùng HTML5 Canvas vẽ đồ thị động (đỉnh tròn, cung định hướng có nhãn tài nguyên và loại xung đột) dựa trên tập dữ liệu lịch trình giao tác được lựa chọn. Đảm bảo KHÔNG dùng SVG hay Mermaid.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 35vh; 
+            max-height: 350px; 
+        } 
+        body {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .active-tab {
+            background-color: #0d9488;
+            color: #ffffff;
+        }
+        .code-terminal {
+            background-color: #0f172a;
+            color: #38bdf8;
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            border: 1px solid #334155;
+        }
+        .sql-kw { color: #f43f5e; font-weight: bold; }
+        .sql-str { color: #10b981; }
+        .sql-obj { color: #fbbf24; }
+        .sql-var { color: #a855f7; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #cbd5e1;
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<header class="bg-teal-700 text-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center py-4">
+            <div class="mb-4 md:mb-0 text-center md:text-left">
+                <h1 class="text-2xl font-bold flex items-center justify-center md:justify-start gap-2">
+                    🛡️ Cổng Ôn Tập Bảo Mật & Giao Tác
+                </h1>
+                <p class="text-teal-100 text-sm mt-1">Chương 4: Bảo mật & An toàn • Chương 5: Quản lý giao tác</p>
+            </div>
+            <nav class="flex space-x-1 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+                <button onclick="portal.switchTab('tab-overview')" id="btn-overview" class="tab-btn px-4 py-2 rounded-md text-sm font-semibold transition-all whitespace-nowrap active-tab">📊 Tổng Quan</button>
+                <button onclick="portal.switchTab('tab-security')" id="btn-security" class="tab-btn px-4 py-2 rounded-md text-sm font-semibold transition-all whitespace-nowrap text-teal-100 hover:bg-teal-600">🔐 Phân Quyền</button>
+                <button onclick="portal.switchTab('tab-backup')" id="btn-backup" class="tab-btn px-4 py-2 rounded-md text-sm font-semibold transition-all whitespace-nowrap text-teal-100 hover:bg-teal-600">💾 Phục Hồi</button>
+                <button onclick="portal.switchTab('tab-schedule')" id="btn-schedule" class="tab-btn px-4 py-2 rounded-md text-sm font-semibold transition-all whitespace-nowrap text-teal-100 hover:bg-teal-600">🔄 Đồ Thị Tuần Tự</button>
+                <button onclick="portal.switchTab('tab-recall')" id="btn-recall" class="tab-btn px-4 py-2 rounded-md text-sm font-semibold transition-all whitespace-nowrap text-teal-100 hover:bg-teal-600">🧠 Lý Thuyết</button>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+    <section id="tab-overview" class="tab-pane block">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4">Ôn Tập Trọng Tâm Chương 4 & 5</h2>
+            <p class="text-slate-600 mb-8 leading-relaxed">
+                Phần bảo mật phân quyền và phục hồi dữ liệu (Chương 4) cùng bài toán phân tích giao tác, lịch trình và khóa đồng thời (Chương 5) là nội dung ôn tập quan trọng cho kỳ học. Hãy tương tác với biểu đồ bên dưới để hiểu rõ các chủ đề cần nắm và cách chuẩn bị kiến thức cho từng phần.
+            </p>
+            <p class="text-teal-700 text-sm font-semibold mb-6">
+                Trang này chỉ dùng để ôn tập và tham khảo. Nó không phải đề kiểm tra chính thức và không thay thế nội dung đề thi thực tế.
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="chart-container">
+                    <canvas id="pointChart"></canvas>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-teal-800 mb-4">🎯 Chuẩn Đầu Ra Học Phần (CLO) Đạt Được</h3>
+                    <div class="space-y-4 text-sm text-slate-700">
+                        <div class="flex items-start gap-3">
+                            <span class="bg-teal-100 text-teal-800 p-1.5 rounded font-bold">Câu 4</span>
+                            <div>
+                                <strong class="block text-slate-800">Quản trị phân quyền & Phục hồi thảm họa (1.5 - 2.0đ)</strong>
+                                Sinh viên có năng lực xây dựng cấu trúc bảo mật đa lớp (Login, User, Role), phân quyền hạn chế truy cập đúng thực tế và thiết lập quy trình cứu hộ dữ liệu khẩn cấp khi hệ thống gặp lỗi phần cứng.
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 border-t border-slate-100 pt-4">
+                            <span class="bg-teal-100 text-teal-800 p-1.5 rounded font-bold">Câu 5</span>
+                            <div>
+                                <strong class="block text-slate-800">Đánh giá giao tác & Kiểm soát đồng thời</strong>
+                                Sinh viên hiểu sâu về các lỗi tranh chấp tài nguyên vật lý, vẽ đồ thị tương tranh để đánh giá tính khả tuần tự xung đột và áp dụng các mức cô lập (Isolation Levels) để chặn lỗi dữ liệu rác.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tab-security" class="tab-pane hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Trình Tạo Kịch Bản Phân Quyền Bảo Mật T-SQL</h2>
+            <p class="text-slate-600 mb-6">
+                Mô tả nghiệp vụ thực tế: Hãy thiết lập một nhóm quyền bảo mật đặc thù cho các bộ phận thư viện, tạo một tài khoản nhân viên đại diện đầu tiên để kiểm thử và tự động phát sinh bộ mã lệnh SQL hoàn chỉnh.
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-5 bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-6">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">1. Chọn Nhóm Quyền (Database Role)</label>
+                        <select id="role-select" onchange="portal.updateSecuritySQL()" class="w-full bg-white border border-slate-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            <option value="Nhom_ThuThu">Nhóm Thủ Thư (Xem độc giả, Quản lý phiếu mượn sách)</option>
+                            <option value="Nhom_KeToan">Nhóm Kế Toán (Xem tất cả, Quản lý thu tiền trễ hạn)</option>
+                            <option value="Nhom_GiamDoc">Nhóm Giám Đốc (Xem toàn quyền, không được ghi sửa)</option>
+                        </select>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">2. Cấu Hình Tài Khoản Đại Diện</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">Tên Đăng Nhập (Login)</label>
+                                <input type="text" id="sec-login" value="MinhTran" oninput="portal.updateSecuritySQL()" class="w-full bg-white border border-slate-300 rounded py-1.5 px-2.5 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-500 mb-1">Mật Khẩu</label>
+                                <input type="text" id="sec-pass" value="Minh@123" oninput="portal.updateSecuritySQL()" class="w-full bg-white border border-slate-300 rounded py-1.5 px-2.5 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <label class="block text-xs text-slate-500 mb-1">Tên Người Dùng Database (User)</label>
+                            <input type="text" id="sec-user" value="MinhTran_User" oninput="portal.updateSecuritySQL()" class="w-full bg-white border border-slate-300 rounded py-1.5 px-2.5 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">3. Tùy Biến Bảng & Quyền Hạn</label>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
+                                <span class="font-mono text-xs font-bold">DOCGIA</span>
+                                <div class="flex gap-2">
+                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" id="p-kh-sel" checked onchange="portal.updateSecuritySQL()"> SELECT</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" id="p-kh-ins" onchange="portal.updateSecuritySQL()"> INSERT</label>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between bg-white p-2 rounded border border-slate-200">
+                                <span class="font-mono text-xs font-bold">MUONSACH</span>
+                                <div class="flex gap-2">
+                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" id="p-pd-sel" checked onchange="portal.updateSecuritySQL()"> SELECT</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" id="p-pd-ins" checked onchange="portal.updateSecuritySQL()"> INSERT</label>
+                                    <label class="flex items-center gap-1 text-xs"><input type="checkbox" id="p-pd-upd" checked onchange="portal.updateSecuritySQL()"> UPDATE</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 flex flex-col h-full justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-sm font-bold text-slate-700">📜 Mã Lệnh T-SQL Tham Khảo Ôn Tập</label>
+                            <button onclick="portal.copyCode('sec-code-block')" class="bg-teal-600 hover:bg-teal-700 text-white text-xs px-3 py-1.5 rounded transition-all">📋 Sao Chép Mã</button>
+                        </div>
+                        <div id="sec-code-block" class="code-terminal h-[450px] overflow-y-auto"></div>
+                    </div>
+                    <div class="bg-teal-50 border border-teal-200 p-4 rounded-xl mt-4 text-xs text-teal-800 leading-relaxed">
+                        <strong>💡 Mẹo ôn tập hiệu quả:</strong> Ôn cách xây dựng 3 giai đoạn chính: tạo nhóm quyền (Role), cấp quyền cho nhóm (GRANT), tạo liên kết bảo mật (CREATE LOGIN/USER) và thêm User vào Role bằng lệnh ALTER ROLE.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tab-backup" class="tab-pane hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Mô Phỏng Trình Tự Phục Hồi Thảm Họa (Disaster Recovery)</h2>
+            <p class="text-slate-600 mb-6">
+                Sự cố xảy ra lúc <strong>16:30 PM</strong> khiến đĩa cứng chứa file dữ liệu vật lý (.mdf) bị phá hỏng. File log (.ldf) vẫn nguyên vẹn. Hãy nhấp chọn từng cột mốc sao lưu trên dòng lịch sử để xem kịch bản khôi phục và cách viết lệnh chính xác.
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-5 space-y-4">
+                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">📅 Nhật Ký Sao Lưu Trong Ngày</h3>
+                    
+                    <div onclick="portal.showBackupStep(1)" id="bk-step-1" class="timeline-item relative pl-8 pb-4 cursor-pointer border border-slate-100 hover:border-teal-300 rounded-lg p-3 bg-teal-50/50 transition-all border-l-4 border-l-teal-500">
+                        <div class="absolute left-2.5 top-4 w-3 h-3 rounded-full bg-teal-500 z-10"></div>
+                        <span class="text-xs font-bold text-slate-500">01:00 AM</span>
+                        <h4 class="font-bold text-slate-800 text-sm">Full Backup (Sao lưu toàn diện)</h4>
+                        <p class="text-xs text-slate-500 mt-1">Lưu trữ toàn bộ trạng thái dữ liệu nền tại 'D:\Backup\Full_Library.bak'</p>
+                    </div>
+
+                    <div onclick="portal.showBackupStep(2)" id="bk-step-2" class="timeline-item relative pl-8 pb-4 cursor-pointer border border-slate-100 hover:border-teal-300 rounded-lg p-3 bg-white transition-all">
+                        <div class="absolute left-2.5 top-4 w-3 h-3 rounded-full bg-slate-400 z-10"></div>
+                        <span class="text-xs font-bold text-slate-500">07:00 AM</span>
+                        <h4 class="font-bold text-slate-800 text-sm">Differential Backup (Sao lưu gia tăng)</h4>
+                        <p class="text-xs text-slate-500 mt-1">Lưu trữ các thay đổi từ sau 01:00 AM vào 'D:\Backup\Diff_Library_07.bak'</p>
+                    </div>
+
+                    <div onclick="portal.showBackupStep(3)" id="bk-step-3" class="timeline-item relative pl-8 pb-4 cursor-pointer border border-slate-100 hover:border-teal-300 rounded-lg p-3 bg-white transition-all">
+                        <div class="absolute left-2.5 top-4 w-3 h-3 rounded-full bg-slate-400 z-10"></div>
+                        <span class="text-xs font-bold text-slate-500">11:00 AM</span>
+                        <h4 class="font-bold text-slate-800 text-sm">Transaction Log Backup Lần 1</h4>
+                        <p class="text-xs text-slate-500 mt-1">Ghi nhận nhật ký thay đổi từ 07:00 đến 11:00 vào 'D:\Backup\Log_Library_11.trn'</p>
+                    </div>
+
+                    <div onclick="portal.showBackupStep(4)" id="bk-step-4" class="timeline-item relative pl-8 pb-4 cursor-pointer border border-slate-100 hover:border-teal-300 rounded-lg p-3 bg-white transition-all">
+                        <div class="absolute left-2.5 top-4 w-3 h-3 rounded-full bg-slate-400 z-10"></div>
+                        <span class="text-xs font-bold text-slate-500">15:00 PM</span>
+                        <h4 class="font-bold text-slate-800 text-sm">Transaction Log Backup Lần 2</h4>
+                        <p class="text-xs text-slate-500 mt-1">Ghi nhận nhật ký thay đổi từ 11:00 đến 15:00 vào 'D:\Backup\Log_Library_15.trn'</p>
+                    </div>
+
+                    <div onclick="portal.showBackupStep(5)" id="bk-step-5" class="timeline-item relative pl-8 cursor-pointer border border-slate-100 hover:border-teal-300 rounded-lg p-3 bg-white transition-all">
+                        <div class="absolute left-2.5 top-4 w-3 h-3 rounded-full bg-rose-500 z-10 animate-ping"></div>
+                        <div class="absolute left-2.5 top-4 w-3 h-3 rounded-full bg-rose-600 z-10"></div>
+                        <span class="text-xs font-bold text-rose-600 font-semibold">16:30 PM (SỰ CỐ VẬT LÝ HỎNG ĐĨA CỨNG)</span>
+                        <h4 class="font-bold text-rose-800 text-sm">Tail-Log Backup & Khôi Phục Hoàn Toàn</h4>
+                        <p class="text-xs text-slate-500 mt-1">Lưu trữ phần đuôi nhật ký giao tác từ sau 15:00 PM khẩn cấp.</p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 id="bk-title" class="text-base font-bold text-slate-800">Quy Trình 1: Khởi Tạo Tail-Log Backup Cấp Cứu</h3>
+                            <button onclick="portal.copyCode('bk-code-display')" class="bg-teal-600 hover:bg-teal-700 text-white text-xs px-3 py-1.5 rounded transition-all">📋 Sao Chép Mã</button>
+                        </div>
+                        <div id="bk-code-display" class="code-terminal h-[320px] overflow-y-auto"></div>
+                    </div>
+                    <div id="bk-explanation" class="bg-amber-50 border border-amber-200 p-5 rounded-xl mt-4 text-sm text-amber-900 leading-relaxed">
+                        Chưa chọn bước nào.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tab-schedule" class="tab-pane hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Phân Tích Xung Đột Tương Tranh & Giải Đồ Thị Tuần Tự</h2>
+            <p class="text-slate-600 mb-6">
+                Hãy chọn một kịch bản lịch trình giao tác đồng thời (Schedule $S$) dưới đây. Hệ thống sẽ tự động biểu diễn thành bảng biểu thời gian, phân tích các cặp thao tác xung đột vật lý và tự động vẽ trực quan Đồ thị tuần tự (Precedence Graph) lên Canvas để kết luận tính khả tuần tự xung đột.
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-4 space-y-6">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">1. Chọn Lịch Trình Thực Thi ($S$)</label>
+                        <select id="schedule-preset" onchange="portal.solveSchedule()" class="w-full bg-white border border-slate-300 rounded-md py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm font-semibold">
+                            <option value="presetHuit">Preset HUIT (Có Chu Trình - Không Khả Tuần Tự)</option>
+                            <option value="presetLibrary">Preset Đề Mẫu (Phi Chu Trình - Khả Tuần Tự)</option>
+                            <option value="presetSimple">Preset Tuần Tự Cơ Bản ($T_1 \rightarrow T_2 \rightarrow T_3$)</option>
+                        </select>
+                    </div>
+
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                        <h4 class="font-bold text-slate-800 text-sm mb-2">🎯 Chuỗi thao tác thô:</h4>
+                        <div id="raw-schedule-text" class="font-mono text-xs bg-white p-3 rounded border border-slate-300 text-teal-700 font-bold break-all"></div>
+                    </div>
+
+                    <div class="max-h-[300px] overflow-y-auto border border-slate-200 rounded-xl">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-100 text-xs text-slate-700 uppercase">
+                                <tr>
+                                    <th class="px-3 py-2 text-center">Bước</th>
+                                    <th class="px-3 py-2 text-center text-rose-600">$T_1$</th>
+                                    <th class="px-3 py-2 text-center text-teal-600">$T_2$</th>
+                                    <th class="px-3 py-2 text-center text-amber-600">$T_3$</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schedule-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 flex flex-col items-center justify-center">
+                            <h3 class="text-sm font-bold text-slate-700 mb-3 text-center">📈 Đồ Thị Tuần Tự (Precedence Graph)</h3>
+                            <canvas id="precedenceCanvas" width="300" height="240" class="bg-white border border-slate-200 rounded-lg shadow-inner"></canvas>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-700 mb-3">🔍 Phân Tích Cặp Xung Đột</h3>
+                                <div id="conflict-list" class="space-y-1.5 max-h-[160px] overflow-y-auto text-xs font-mono">
+                                </div>
+                            </div>
+                            <div class="border-t border-slate-200 pt-3 mt-3">
+                                <span class="text-xs font-bold text-slate-500 uppercase block mb-1">Kết luận khảo sát</span>
+                                <div id="serializability-verdict" class="text-sm font-bold p-3 rounded-lg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-teal-50 border border-teal-200 p-4 rounded-xl text-xs text-teal-800 leading-relaxed">
+                        <strong>💡 Quy tắc vàng ôn tập:</strong> Khi phân tích tính tương đương View hoặc tuần tự xung đột, hãy chỉ ra 3 điều kiện: (1) Cùng tác động trên một đối tượng dữ liệu $A$ hoặc $B$, (2) Ít nhất một trong hai thao tác là Ghi ($Write$), (3) Thuộc về hai giao tác khác nhau.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tab-recall" class="tab-pane hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4">Câu Hỏi Trọng Tâm Active Recall (Chương 4 & 5)</h2>
+            <p class="text-slate-600 mb-8 leading-relaxed">
+                Phương pháp kiểm thử chủ động (Active Recall) ép bộ não của bạn phải hoạt động để tìm câu trả lời trước khi xem đáp án. Hãy nhấp chuột vào từng thẻ câu hỏi lý thuyết bên dưới để kiểm tra mức độ ghi nhớ của bạn đối với các khái niệm giao tác và an toàn dữ liệu.
+            </p>
+            <div id="recall-container" class="space-y-4">
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="bg-slate-800 text-slate-400 py-6 text-center border-t border-slate-700 mt-12">
+    <p class="text-sm">Trường Đại học Công Thương TP.HCM (HUIT) - Khoa Công Nghệ Thông Tin</p>
+    <p class="text-xs mt-2 text-slate-500">© 2026 Hệ Thống Ôn Tập Tương Tác Cao Cấp HQTCSDL. Học tốt - Thi cao.</p>
+</footer>
+
+<script>
+    const securityTemplates = {
+        Nhom_ThuThu: {
+            role: "Nhom_ThuThu",
+            grant: [
+                "GRANT SELECT ON DOCGIA TO Nhom_ThuThu;",
+                "GRANT SELECT ON SACH TO Nhom_ThuThu;",
+                "GRANT SELECT, INSERT, UPDATE ON MUONSACH TO Nhom_ThuThu;",
+                "GRANT SELECT, INSERT, UPDATE ON CT_MUONSACH TO Nhom_ThuThu;"
+            ]
+        },
+        Nhom_KeToan: {
+            role: "Nhom_KeToan",
+            grant: [
+                "GRANT SELECT ON DOCGIA TO Nhom_KeToan;",
+                "GRANT SELECT ON SACH TO Nhom_KeToan;",
+                "GRANT SELECT ON MUONSACH TO Nhom_KeToan;",
+                "GRANT SELECT ON CT_MUONSACH TO Nhom_KeToan;",
+                "GRANT SELECT, INSERT, UPDATE, DELETE ON PHIEUTHU TO Nhom_KeToan;"
+            ]
+        },
+        Nhom_GiamDoc: {
+            role: "Nhom_GiamDoc",
+            grant: [
+                "GRANT SELECT ON DOCGIA TO Nhom_GiamDoc;",
+                "GRANT SELECT ON SACH TO Nhom_GiamDoc;",
+                "GRANT SELECT ON MUONSACH TO Nhom_GiamDoc;",
+                "GRANT SELECT ON CT_MUONSACH TO Nhom_GiamDoc;"
+            ]
+        }
+    };
+
+    const backupSteps = {
+        1: {
+            title: "Bước 1: Khôi phục bản sao lưu toàn diện (Full Backup)",
+            code: `-- Tiến hành khôi phục CSDL nền từ tệp sao lưu vật lý đầu ngày\nRESTORE DATABASE QL_ThuVien \nFROM DISK = 'D:\\Backup\\Full_ThuVien.bak' \nWITH NORECOVERY;`,
+            exp: "<strong>Tại sao phải dùng WITH NORECOVERY?</strong><br>Thuộc tính này báo báo hiệu cho SQL Server biết rằng chuỗi phục hồi vẫn còn các tệp dữ liệu log hoặc diff kế tiếp chưa nạp hết. CSDL sẽ được giữ ở trạng thái chờ (Restoring) và ngăn chặn người dùng truy cập sớm, tránh làm hỏng tiến trình khôi phục."
+        },
+        2: {
+            title: "Bước 2: Khôi phục bản sao lưu gia tăng (Differential Backup)",
+            code: `-- Nạp bản gia tăng gần thời điểm thảm họa nhất (07:00 AM)\nRESTORE DATABASE QL_ThuVien \nFROM DISK = 'D:\\Backup\\Diff_ThuVien_07.bak' \nWITH NORECOVERY;`,
+            exp: "<strong>Nguyên lý nạp bản Diff:</strong><br>Bản Differential lưu trữ toàn bộ thay đổi kể từ sau bản Full gần nhất cho đến lúc 07:00 AM. Khi nạp bản này, hệ thống sẽ bỏ qua toàn bộ các biến động trung gian giữa hai mốc này để rút ngắn thời gian. Vẫn duy trì tùy chọn <code>NORECOVERY</code>."
+        },
+        3: {
+            title: "Bước 3: Khôi phục tệp nhật ký giao tác lần 1 (Log Backup Lần 1)",
+            code: `-- Nạp nhật ký giao tác từ sau mốc Diff (11:00 AM)\nRESTORE LOG QL_ThuVien \nFROM DISK = 'D:\\Backup\\Log_ThuVien_11.trn' \nWITH NORECOVERY;`,
+            exp: "<strong>Nạp Log theo chuỗi liên tục:</strong><br>Nhật ký giao tác bắt buộc phải được nạp tuần tự từng tệp một không được ngắt quãng. Vì bản Diff kết thúc lúc 07:00 AM, nên ta nạp tiếp bản Log_11 để khôi phục dữ liệu từ 07:00 đến 11:00."
+        },
+        4: {
+            title: "Bước 4: Khôi phục tệp nhật ký giao tác lần 2 (Log Backup Lần 2)",
+            code: `-- Nạp nhật ký giao tác tiếp theo (15:00 PM)\nRESTORE LOG QL_ThuVien \nFROM DISK = 'D:\\Backup\\Log_ThuVien_15.trn' \nWITH NORECOVERY;`,
+            exp: "<strong>Nạp tiếp chuỗi giao dịch:</strong><br>Nạp tệp log thứ hai được sao lưu lúc 15:00 PM để tiếp tục ghi nhận toàn bộ hoạt động mượn trả sách trong thư viện phát sinh từ 11:00 đến 15:00."
+        },
+        5: {
+            title: "Bước 5: Sao lưu và Phục hồi Đuôi Nhật Ký (Tail-Log Backup)",
+            code: `-- 1. Sao lưu phần Log nằm kẹt trong file .ldf hoạt động khẩn cấp\nBACKUP LOG QL_ThuVien \nTO DISK = 'D:\\Backup\\Tail_ThuVien.trn' \nWITH NO_TRUNCATE, NORECOVERY;\n\n-- 2. Phục hồi tệp đuôi Log này để không mất bất kỳ một giao dịch nào\nRESTORE LOG QL_ThuVien \nFROM DISK = 'D:\\Backup\\Tail_ThuVien.trn' \nWITH RECOVERY;`,
+            exp: "<strong>Cứu hộ Tail-log (Cực kỳ quan trọng):</strong><br>Lệnh <code>BACKUP LOG ... WITH NO_TRUNCATE, NORECOVERY</code> cho phép trích xuất phần đuôi nhật ký giao tác từ 15:00 đến 16:30 trực tiếp từ file vật lý ldf bị hư hại nhẹ mà không cần tệp mdf hoạt động. Ở bước phục hồi cuối cùng, ta đổi sang thuộc tính <code>WITH RECOVERY</code> để kết thúc quy trình, mang CSDL trực tuyến trở lại hoạt động bình thường!"
+        }
+    };
+
+    const schedulePresets = {
+        presetHuit: {
+            raw: "S = {R1(A), W1(A), R2(B), R3(A), W3(B), W1(A), R1(B), W2(B)}",
+            steps: [
+                { t: 1, tx: "T1", op: "Read(A)" },
+                { t: 2, tx: "T1", op: "Write(A)" },
+                { t: 3, tx: "T2", op: "Read(B)" },
+                { t: 4, tx: "T3", op: "Read(A)" },
+                { t: 5, tx: "T3", op: "Write(B)" },
+                { t: 6, tx: "T1", op: "Write(A)" },
+                { t: 7, tx: "T1", op: "Read(B)" },
+                { t: 8, tx: "T2", op: "Write(B)" }
+            ],
+            conflicts: [
+                "T1 -> T3 (W1(A) ở bước 2 trước R3(A) ở bước 4)",
+                "T3 -> T1 (R3(A) ở bước 4 trước W1(A) ở bước 6)",
+                "T2 -> T3 (R2(B) ở bước 3 trước W3(B) ở bước 5)",
+                "T3 -> T2 (W3(B) ở bước 5 trước W2(B) ở bước 8)"
+            ],
+            edges: [
+                { from: 1, to: 3, label: "A (W-R)" },
+                { from: 3, to: 1, label: "A (R-W)" },
+                { from: 2, to: 3, label: "B (R-W)" },
+                { from: 3, to: 2, label: "B (W-W)" }
+            ],
+            serializable: false,
+            verdict: "❌ KHÔNG KHẢ TUẦN TỰ XUNG ĐỘT<br><span class='text-xs font-normal text-rose-700 block mt-1'>Lý do: Đồ thị chứa chu trình vòng lặp trực tiếp T1 ↔ T3 và T2 ↔ T3. Hệ thống bị kẹt và không thể tương đương với bất kỳ lịch tuần tự nào.</span>"
+        },
+        presetLibrary: {
+            raw: "S = {R1(A), R2(B), W1(A), R3(A), W2(B), W3(A), R1(B), W1(B)}",
+            steps: [
+                { t: 1, tx: "T1", op: "Read(A)" },
+                { t: 2, tx: "T2", op: "Read(B)" },
+                { t: 3, tx: "T1", op: "Write(A)" },
+                { t: 4, tx: "T3", op: "Read(A)" },
+                { t: 5, tx: "T2", op: "Write(B)" },
+                { t: 6, tx: "T3", op: "Write(A)" },
+                { t: 7, tx: "T1", op: "Read(B)" },
+                { t: 8, tx: "T1", op: "Write(B)" }
+            ],
+            conflicts: [
+                "T1 -> T3 (W1(A) ở bước 3 trước R3(A) ở bước 4)",
+                "T1 -> T3 (W1(A) ở bước 3 trước W3(A) ở bước 6)",
+                "T2 -> T1 (W2(B) ở bước 5 trước R1(B) ở bước 7)",
+                "T2 -> T1 (W2(B) ở bước 5 trước W1(B) ở bước 8)"
+            ],
+            edges: [
+                { from: 1, to: 3, label: "A" },
+                { from: 2, to: 1, label: "B" }
+            ],
+            serializable: true,
+            verdict: "✅ KHẢ TUẦN TỰ XUNG ĐỘT<br><span class='text-xs font-normal text-emerald-700 block mt-1'>Thứ tự tuần tự tương đương duy nhất: <strong>T2 → T1 → T3</strong>.<br>Lý do: Đồ thị tuần tự hướng thẳng phi chu trình (không chứa vòng lặp khép kín).</span>"
+        },
+        presetSimple: {
+            raw: "S = {R1(A), W1(A), R2(A), W2(A), R3(B), W3(B)}",
+            steps: [
+                { t: 1, tx: "T1", op: "Read(A)" },
+                { t: 2, tx: "T1", op: "Write(A)" },
+                { t: 3, tx: "T2", op: "Read(A)" },
+                { t: 4, tx: "T2", op: "Write(A)" },
+                { t: 5, tx: "T3", op: "Read(B)" },
+                { t: 6, tx: "T3", op: "Write(B)" }
+            ],
+            conflicts: [
+                "T1 -> T2 (W1(A) ở bước 2 trước R2(A) ở bước 3)",
+                "T1 -> T2 (W1(A) ở bước 2 trước W2(A) ở bước 4)"
+            ],
+            edges: [
+                { from: 1, to: 2, label: "A" }
+            ],
+            serializable: true,
+            verdict: "✅ KHẢ TUẦN TỰ XUNG ĐỘT<br><span class='text-xs font-normal text-emerald-700 block mt-1'>Thứ tự tuần tự tương đương: <strong>T1 → T2 → T3</strong> (T3 độc lập tài nguyên B).<br>Lý do: Đồ thị tuần tự hoàn toàn thẳng hàng và không có vòng lặp.</span>"
+        }
+    };
+
+    const theoryData = [
+        {
+            id: "t1",
+            title: "Câu 1: Phân biệt cơ chế xác thực bảo mật đa lớp",
+            q: "SQL Server quản trị bảo mật thông qua mô hình Login và User như thế nào? Sự khác nhau cốt lõi là gì?",
+            a: "SQL Server bảo mật theo mô hình 2 lớp tách biệt:<br>1. <strong>Login (Lớp Máy Chủ - Server Level):</strong> Tài khoản dùng để kết nối vào hệ thống máy chủ cơ sở dữ liệu. Được lưu ở DB hệ thống 'master'.<br>2. <strong>User (Lớp Cơ Sở Dữ Liệu - Database Level):</strong> Thực thể được liên kết trực tiếp với một Login cụ thể và nằm trong phạm vi của một CSDL đơn lẻ để trực tiếp cấp phát quyền tác động lên các bảng dữ liệu.<br>Sự khác biệt cốt lõi: Login dùng để <i>đăng nhập hệ thống</i>, User dùng để <i>phân quyền thực thi lệnh</i> trên tài nguyên bảng."
+        },
+        {
+            id: "t2",
+            title: "Câu 2: Các tính chất của một giao tác (ACID)",
+            q: "Nêu khái niệm giao tác và trình bày ý nghĩa của bốn tính chất ACID cấu thành nên sự an toàn của giao dịch.",
+            a: "<strong>Giao tác (Transaction):</strong> Là một tập hợp các câu lệnh SQL xử lý logic được thực thi tuần tự như một đơn vị công việc duy nhất.<br><strong>Thuộc tính ACID:</strong><br>- <strong>A (Atomicity - Tính nguyên tố):</strong> Giao tác phải được thực hiện trọn vẹn 100% hoặc không thực hiện gì cả (All or Nothing).<br>- <strong>C (Consistency - Tính nhất quán):</strong> Chuyển CSDL từ trạng thái nhất quán này sang trạng thái nhất quán khác.<br>- <strong>I (Isolation - Tính cô lập):</strong> Một giao tác đang chạy không được chịu ảnh hưởng hay rò rỉ dữ liệu sang giao tác khác chạy song song.<br>- <strong>D (Durability - Tính bền vững):</strong> Khi giao tác đã COMMIT thành công, dữ liệu phải được lưu xuống ổ đĩa vĩnh viễn dù có sự cố cúp điện đột ngột."
+        },
+        {
+            id: "t3",
+            title: "Câu 3: Các vấn đề truy xuất đồng thời",
+            q: "Phân biệt lỗi Đọc dữ liệu rác (Dirty Read) và lỗi Đọc không thể lặp lại (Non-repeatable Read).",
+            a: "1. <strong>Dirty Read (Đọc rác):</strong> Giao tác T1 thay đổi dữ liệu nhưng chưa COMMIT. Giao tác T2 vào đọc dữ liệu tạm bợ này. Sau đó T1 ROLLBACK hoàn tác. Kết quả là T2 đã sử dụng dữ liệu rác chưa từng tồn tại chính thức.<br>2. <strong>Non-repeatable Read (Không thể đọc lại):</strong> T1 vào đọc dữ liệu lần 1. T2 nhảy vào cập nhật (UPDATE) dữ liệu đó và thực hiện COMMIT. T1 quay lại đọc lần 2 thì thấy dữ liệu đã bị thay đổi giá trị so với lần đọc thứ nhất."
+        },
+        {
+            id: "t4",
+            title: "Câu 4: Các mức độ cô lập (Isolation Levels)",
+            q: "Mức cô lập READ COMMITTED và REPEATABLE READ giải quyết triệt để lỗi gì và sử dụng cơ chế khóa thế nào?",
+            a: "1. <strong>READ COMMITTED:</strong> Giải quyết triệt để lỗi Dirty Read. Cơ chế khóa: Thiết lập khóa chia sẻ (S-Lock) khi đọc dữ liệu nhưng nhả khóa này ngay sau khi đọc xong dòng đó, không giữ khóa đến hết giao tác.<br>2. <strong>REPEATABLE READ:</strong> Giải quyết triệt để lỗi Dirty Read và Non-repeatable Read. Cơ chế khóa: Đặt khóa S-Lock lên dữ liệu và giữ chặt khóa này cho đến khi giao tác thực hiện gọi COMMIT/ROLLBACK xong xuôi, ngăn chặn mọi hành vi ghi (X-Lock) của giao tác khác."
+        }
+    ];
+
+    const portal = {
+        state: {
+            chart: null,
+            canvas: null,
+            ctx: null
+        },
+
+        init: function() {
+            this.initChart();
+            this.updateSecuritySQL();
+            this.showBackupStep(1);
+            this.solveSchedule();
+            this.renderTheory();
+        },
+
+        switchTab: function(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('block');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active-tab', 'text-white');
+                btn.classList.add('text-teal-100', 'hover:bg-teal-600');
+            });
+
+            const activeBtnId = 'btn-' + tabId.replace('tab-', '');
+            const activeBtn = document.getElementById(activeBtnId);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-teal-100', 'hover:bg-teal-600');
+                activeBtn.classList.add('active-tab', 'text-white');
+            }
+
+            if (tabId === 'tab-schedule') {
+                setTimeout(() => { this.drawPrecedenceGraph(); }, 50);
+            }
+        },
+
+        initChart: function() {
+            const ctx = document.getElementById('pointChart').getContext('2d');
+            this.state.chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Bảo Mật & Phân Quyền (1.0đ)',
+                        'Sao Lưu Tail-Log (0.5đ)',
+                        'Quy Trình Restore (0.5đ)',
+                        'Biểu diễn Lịch Trình (0.5đ)',
+                        'Phân Tích Xung Đột (0.5đ)',
+                        'Vẽ Đồ Thị & Kết Luận (1.0đ)'
+                    ],
+                    datasets: [{
+                        data: [1.0, 0.5, 0.5, 0.5, 0.5, 1.0],
+                        backgroundColor: [
+                            '#0d9488',
+                            '#0f766e',
+                            '#115e59',
+                            '#f59e0b',
+                            '#d97706',
+                            '#b45309'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 11, family: 'Segoe UI' },
+                                boxWidth: 12
+                            }
+                        }
+                    }
+                }
+            });
+        },
+
+        highlightSQL: function(code) {
+            return code
+                .replace(/(CREATE ROLE|CREATE LOGIN|CREATE USER|GRANT|REVOKE|DENY|SELECT|INSERT|UPDATE|DELETE|BACKUP DATABASE|BACKUP LOG|RESTORE DATABASE|RESTORE LOG|FROM DISK|TO DISK|WITH PASSWORD|FOR LOGIN|ADD MEMBER|ALTER ROLE|WITH NORECOVERY|WITH RECOVERY|WITH NO_TRUNCATE|WITH INIT|WITH DIFFERENTIAL)/g, '<span class="sql-kw">$1</span>')
+                .replace(/('[^']*')/g, '<span class="sql-str">$1</span>')
+                .replace(/(QL_ThuVien|DOCGIA|SACH|MUONSACH|CT_MUONSACH|PHIEUTHU|MinhTran_User|Nhom_ThuThu|Nhom_KeToan|Nhom_GiamDoc)/g, '<span class="sql-obj">$1</span>')
+                .replace(/(@[a-zA-Z0-9_]+)/g, '<span class="sql-var">$1</span>');
+        },
+
+        updateSecuritySQL: function() {
+            const roleSelect = document.getElementById('role-select').value;
+            const login = document.getElementById('sec-login').value;
+            const pass = document.getElementById('sec-pass').value;
+            const user = document.getElementById('sec-user').value;
+
+            let sql = `-- GIAI ĐOẠN 1: Tạo nhóm quyền (Role) hệ thống\n`;
+            sql += `CREATE ROLE ${roleSelect};\n\n`;
+
+            sql += `-- GIAI ĐOẠN 2: Phân quyền trực tiếp cho nhóm Role trên các bảng\n`;
+            
+            const isKhSel = document.getElementById('p-kh-sel').checked;
+            const isKhIns = document.getElementById('p-kh-ins').checked;
+            if (isKhSel || isKhIns) {
+                let grants = [];
+                if (isKhSel) grants.push("SELECT");
+                if (isKhIns) grants.push("INSERT");
+                sql += `GRANT ${grants.join(', ')} ON DOCGIA TO ${roleSelect};\n`;
+            } else {
+                sql += `-- (Không cấp quyền trên bảng DOCGIA)\n`;
+            }
+
+            const isPdSel = document.getElementById('p-pd-sel').checked;
+            const isPdIns = document.getElementById('p-pd-ins').checked;
+            const isPdUpd = document.getElementById('p-pd-upd').checked;
+            if (isPdSel || isPdIns || isPdUpd) {
+                let grants = [];
+                if (isPdSel) grants.push("SELECT");
+                if (isPdIns) grants.push("INSERT");
+                if (isPdUpd) grants.push("UPDATE");
+                sql += `GRANT ${grants.join(', ')} ON MUONSACH TO ${roleSelect};\n`;
+            }
+            
+            sql += `GRANT SELECT ON SACH TO ${roleSelect};\n`;
+            sql += `GRANT SELECT, INSERT, UPDATE ON CT_MUONSACH TO ${roleSelect};\n\n`;
+
+            sql += `-- GIAI ĐOẠN 3: Tạo thông tin xác thực cho nhân viên mới đầu tiên\n`;
+            sql += `CREATE LOGIN ${login} WITH PASSWORD = '${pass}';\n`;
+            sql += `CREATE USER ${user} FOR LOGIN ${login};\n\n`;
+
+            sql += `-- GIAI ĐOẠN 4: Thêm User đại diện vào Role\n`;
+            sql += `ALTER ROLE ${roleSelect} ADD MEMBER ${user};\n\n`;
+            sql += `-- 💡 Hướng dẫn cho giám thị: Để thêm các nhân viên khác trong cùng phòng ban, \n-- chỉ cần viết lệnh tạo Login/User mới và gọi ALTER ROLE ... ADD MEMBER tương tự.`;
+
+            document.getElementById('sec-code-block').innerHTML = this.highlightSQL(sql);
+        },
+
+        showBackupStep: function(stepId) {
+            document.querySelectorAll('.timeline-item').forEach(el => {
+                el.classList.remove('bg-teal-50/50', 'border-l-4', 'border-l-teal-500');
+                el.classList.add('bg-white');
+            });
+            const activeItem = document.getElementById('bk-step-' + stepId);
+            activeItem.classList.remove('bg-white');
+            activeItem.classList.add('bg-teal-50/50', 'border-l-4', 'border-l-teal-500');
+
+            const stepData = backupSteps[stepId];
+            document.getElementById('bk-title').innerText = stepData.title;
+            document.getElementById('bk-code-display').innerHTML = this.highlightSQL(stepData.code);
+            document.getElementById('bk-explanation').innerHTML = stepData.exp;
+        },
+
+        solveSchedule: function() {
+            const presetKey = document.getElementById('schedule-preset').value;
+            const preset = schedulePresets[presetKey];
+
+            document.getElementById('raw-schedule-text').innerText = preset.raw;
+
+            const tbody = document.getElementById('schedule-table-body');
+            tbody.innerHTML = '';
+            
+            preset.steps.forEach(step => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-100 hover:bg-slate-50";
+                
+                let t1Cell = '', t2Cell = '', t3Cell = '';
+                if (step.tx === 'T1') t1Cell = `<span class="bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded text-xs">${step.op}</span>`;
+                if (step.tx === 'T2') t2Cell = `<span class="bg-teal-100 text-teal-800 font-bold px-2 py-0.5 rounded text-xs">${step.op}</span>`;
+                if (step.tx === 'T3') t3Cell = `<span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded text-xs">${step.op}</span>`;
+
+                tr.innerHTML = `
+                    <td class="px-3 py-1.5 text-center font-bold text-slate-500 text-xs">${step.t}</td>
+                    <td class="px-3 py-1.5 text-center">${t1Cell}</td>
+                    <td class="px-3 py-1.5 text-center">${t2Cell}</td>
+                    <td class="px-3 py-1.5 text-center">${t3Cell}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const conflictDiv = document.getElementById('conflict-list');
+            conflictDiv.innerHTML = '';
+            preset.conflicts.forEach(c => {
+                const item = document.createElement('div');
+                item.className = "p-1.5 bg-slate-100 rounded text-slate-700 text-xs flex items-center gap-1.5 border border-slate-200";
+                item.innerHTML = `⚡ <span>${c}</span>`;
+                conflictDiv.appendChild(item);
+            });
+
+            const verdictDiv = document.getElementById('serializability-verdict');
+            verdictDiv.innerHTML = preset.verdict;
+            if (preset.serializable) {
+                verdictDiv.className = "text-sm font-bold p-3 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200";
+            } else {
+                verdictDiv.className = "text-sm font-bold p-3 rounded-lg bg-rose-50 text-rose-800 border border-rose-200";
+            }
+
+            this.drawPrecedenceGraph();
+        },
+
+        drawPrecedenceGraph: function() {
+            const presetKey = document.getElementById('schedule-preset').value;
+            const preset = schedulePresets[presetKey];
+
+            const canvas = document.getElementById('precedenceCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const nodes = {
+                T1: { x: 150, y: 50, color: '#f43f5e', name: "T1" },
+                T2: { x: 60, y: 170, color: '#0d9488', name: "T2" },
+                T3: { x: 240, y: 170, color: '#d97706', name: "T3" }
+            };
+
+            const drawArrow = (fromNode, toNode, label, isDouble) => {
+                ctx.beginPath();
+                ctx.strokeStyle = '#334155';
+                ctx.lineWidth = 2;
+
+                const dx = toNode.x - fromNode.x;
+                const dy = toNode.y - fromNode.y;
+                const angle = Math.atan2(dy, dx);
+
+                const startX = fromNode.x + 24 * Math.cos(angle);
+                const startY = fromNode.y + 24 * Math.sin(angle);
+                const endX = toNode.x - 26 * Math.cos(angle);
+                const endY = toNode.y - 26 * Math.sin(angle);
+
+                ctx.moveTo(startX, startY);
+
+                if (isDouble) {
+                    const cpX = (startX + endX) / 2 + 30 * Math.cos(angle + Math.PI / 2);
+                    const cpY = (startY + endY) / 2 + 30 * Math.sin(angle + Math.PI / 2);
+                    ctx.quadraticCurveTo(cpX, cpY, endX, endY);
+                    ctx.stroke();
+
+                    const tAngle = Math.atan2(endY - cpY, endX - cpX);
+                    ctx.beginPath();
+                    ctx.fillStyle = '#334155';
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(endX - 8 * Math.cos(tAngle - Math.PI / 6), endY - 8 * Math.sin(tAngle - Math.PI / 6));
+                    ctx.lineTo(endX - 8 * Math.cos(tAngle + Math.PI / 6), endY - 8 * Math.sin(tAngle + Math.PI / 6));
+                    ctx.fill();
+
+                    ctx.font = "bold 10px monospace";
+                    ctx.fillStyle = '#64748b';
+                    ctx.fillText(label, cpX - 4, cpY + 4);
+                } else {
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.fillStyle = '#334155';
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(endX - 8 * Math.cos(angle - Math.PI / 6), endY - 8 * Math.sin(angle - Math.PI / 6));
+                    ctx.lineTo(endX - 8 * Math.cos(angle + Math.PI / 6), endY - 8 * Math.sin(angle + Math.PI / 6));
+                    ctx.fill();
+
+                    ctx.font = "bold 10px monospace";
+                    ctx.fillStyle = '#64748b';
+                    ctx.fillText(label, (startX + endX) / 2 - 10, (startY + endY) / 2 - 5);
+                }
+            };
+
+            const edgeCheck = {};
+            preset.edges.forEach(edge => {
+                const key1 = `${edge.from}-${edge.to}`;
+                const key2 = `${edge.to}-${edge.from}`;
+                const isDouble = preset.edges.some(e => e.from === edge.to && e.to === edge.from);
+
+                const fromN = nodes[`T${edge.from}`];
+                const toN = nodes[`T${edge.to}`];
+                drawArrow(fromN, toN, edge.label, isDouble);
+            });
+
+            Object.values(nodes).forEach(node => {
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 20, 0, 2 * Math.PI);
+                ctx.fillStyle = node.color;
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.font = "bold 14px Arial";
+                ctx.fillStyle = '#ffffff';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(node.name, node.x, node.y);
+            });
+        },
+
+        renderTheory: function() {
+            const container = document.getElementById('recall-container');
+            theoryData.forEach(t => {
+                const item = document.createElement('div');
+                item.className = "border border-slate-200 rounded-lg overflow-hidden";
+                item.innerHTML = `
+                    <button onclick="portal.toggleElement('ans-${t.id}')" class="w-full text-left bg-slate-50 hover:bg-slate-100 p-4 focus:outline-none flex justify-between items-center transition-colors">
+                        <span class="font-bold text-slate-800 text-sm md:text-base">${t.title}</span>
+                        <span class="text-teal-500 text-xl">🔽</span>
+                    </button>
+                    <div class="p-4 bg-white">
+                        <p class="text-slate-700 italic text-sm mb-3">"${t.q}"</p>
+                        <div id="ans-${t.id}" style="display: none;" class="pt-4 border-t border-slate-100 mt-2">
+                            <div class="bg-teal-50 rounded-lg p-4 border border-teal-100 text-xs md:text-sm text-slate-800 leading-relaxed">
+                                ${t.a}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        },
+
+        toggleElement: function(elId) {
+            const el = document.getElementById(elId);
+            if (el.style.display === 'none' || el.style.display === '') {
+                el.style.display = 'block';
+            } else {
+                el.style.display = 'none';
+            }
+        },
+
+        copyCode: function(containerId) {
+            const text = document.getElementById(containerId).innerText;
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            
+            const notify = document.createElement('div');
+            notify.className = "fixed bottom-5 right-5 bg-teal-600 text-white py-2.5 px-5 rounded-lg shadow-lg z-50 text-sm font-semibold animate-bounce";
+            notify.innerText = "📋 Đã sao chép mã T-SQL vào bộ nhớ tạm!";
+            document.body.appendChild(notify);
+            setTimeout(() => { notify.remove(); }, 2500);
+        }
+    };
+
+    window.onload = function() {
+        portal.init();
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề Thi Thử Nghiệm Tự Luận Cuối Kỳ: Hệ Quản Trị CSDL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Emerald Premium & Academic Slate (Nền xám slate nhạt sạch sẽ #f8fafc, màu nhấn mỏ neo lục bảo cao cấp #059669 giúp tăng tính tập trung học thuật, màu hổ phách #d97706 làm điểm nhấn cảnh báo, và màu tối biển sâu #0f172a làm bảng mã lệnh chuyên nghiệp). -->
+    <!-- Application Structure Plan: 
+        Ứng dụng được thiết kế theo cấu trúc "Đề thi thông minh hỗn hợp" (Hybrid Smart Exam Sheet) kết hợp hoàn hảo giữa môi trường làm bài tương tác trực tuyến và chuẩn trình bày bản in giấy:
+        1. "Khu vực Hành chính": Cho phép sinh viên nhập thông tin MSSV, họ tên và lớp học phần; các thông tin này lập tức đồng bộ vào phôi đề thi chính thức.
+        2. "Bảng điều khiển phòng thi": Gồm bộ đếm giờ ngược 75 phút hoạt động thời gian thực với cảnh báo rung đỏ và nút In đề thi thông minh (tự động ẩn các thành phần tương tác thừa khi in ra giấy).
+        3. "Bố cục Đề thi tiêu chuẩn": Phục dựng lại chính xác 100% kết cấu phôi đề thi thật của HUIT, chia rõ 4 Câu tự luận lớn kèm theo biểu phân rã điểm chi tiết.
+        4. "Khu vực Giấy Nháp & Đáp Án": Từng câu hỏi có khung nhập giấy nháp kỹ thuật số tự lưu trạng thái, cùng với nút lật mở Barem hướng dẫn chấm chi tiết của giảng viên.
+        5. "Minh họa Đồ thị & Lịch trình": Trực quan hóa từng bước thực thi lịch trình giao tác của Câu 3, giúp sinh viên hiểu rõ cơ chế tương tranh xung đột.
+    -->
+    <!-- Visualization & Content Choices:
+        - Phân chia tỷ trọng điểm thi -> Mục tiêu: So sánh trực quan -> Sử dụng Chart.js Doughnut Chart với kích thước nhỏ gọn vừa vặn trong góc admin.
+        - Trình tự thực thi giao tác Câu 3 -> Mục tiêu: Theo dõi xung đột thời gian -> Thiết lập trình phân tích bước tương tác (Interactive Step Player) hiển thị trực quan trạng thái khóa.
+        - Barem đáp án -> Mục tiêu: Đối chiếu học tập -> Dạng khung gấp mở (Accordion) ẩn mặc định để sinh viên tự suy nghĩ trước khi xem code.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 220px;
+            max-height: 240px;
+        }
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .code-block {
+            background-color: #0f172a;
+            color: #38bdf8;
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            border: 1px solid #1e293b;
+            text-align: left;
+        }
+        .sql-keyword { color: #f43f5e; font-weight: bold; }
+        .sql-string { color: #10b981; }
+        .sql-object { color: #eab308; }
+        .sql-variable { color: #a855f7; }
+        .draft-area {
+            font-family: 'Consolas', monospace;
+            background-color: #f1f5f9;
+            border: 1px dashed #cbd5e1;
+            color: #334155;
+            width: 100%;
+            min-height: 120px;
+            border-radius: 0.375rem;
+            padding: 0.75rem;
+            font-size: 0.875rem;
+            resize: vertical;
+        }
+        .draft-area:focus {
+            outline: none;
+            border-color: #059669;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.1);
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                font-size: 12px !important;
+            }
+            .print-container {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            .print-border {
+                border: 1px solid #000000 !important;
+            }
+            .print-page-break {
+                page-break-before: always;
+            }
+            input, select, textarea {
+                border: none !important;
+                border-bottom: 1px dotted #000000 !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+            }
+            .print-barem-box {
+                display: block !important;
+                border: 1px solid #000000 !important;
+                background: transparent !important;
+                color: #000000 !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 flex flex-col">
+
+    <!-- KHU VỰC BẢNG ĐIỀU KHIỂN CHỈ HIỂN THỊ TRÊN MÀN HÌNH -->
+    <div class="max-w-5xl mx-auto w-full mb-6 no-print">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col md:flex-row gap-6 justify-between items-center">
+            <div class="w-full md:w-auto">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    🛠️ Bảng Điều Khiển Phòng Thi Thử
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">Dành cho sinh viên tự luyện tập trên giấy hoặc giảng viên phân phát đề.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase">Họ & Tên Sinh Viên</label>
+                        <input type="text" id="input-name" value="Nguyễn Văn A" oninput="exam.syncInfo()" class="w-full mt-1 bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase">Mã Số Sinh Viên (MSSV)</label>
+                        <input type="text" id="input-id" value="2001240001" oninput="exam.syncInfo()" class="w-full mt-1 bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase">Lớp Học Phần</label>
+                        <input type="text" id="input-class" value="HQTCSDL_S4_1-3" oninput="exam.syncInfo()" class="w-full mt-1 bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-6 w-full md:w-auto">
+                <div id="timer-box" class="text-center">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">⏱️ Thời gian làm bài</span>
+                    <span id="timer-display" class="text-3xl font-mono font-bold text-slate-700 block my-1">75:00</span>
+                    <div class="flex gap-2 justify-center">
+                        <button id="btn-timer-start" onclick="exam.toggleTimer()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-2.5 py-1.5 rounded transition-all">Bắt đầu</button>
+                        <button onclick="exam.resetTimer()" class="bg-slate-200 hover:bg-slate-300 text-slate-600 font-semibold text-xs px-2.5 py-1.5 rounded transition-all">Đặt lại</button>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 mt-4 w-full">
+                    <button onclick="exam.printExam()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs py-2 px-4 rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-sm">
+                        🖨️ In Đề Ra Giấy
+                    </button>
+                    <a href="De1KiemTraChuong45.pdf" download class="w-full inline-flex bg-slate-700 hover:bg-slate-900 text-white font-bold text-xs py-2 px-4 rounded-lg items-center justify-center gap-1.5 transition-all shadow-sm text-center">
+                        📥 Tải PDF Đề Chương 45
+                    </a>
+                    <button disabled id="btn-toggle-all" class="w-full bg-slate-400 text-white font-bold text-xs py-2 px-4 rounded-lg transition-all shadow-sm opacity-60 cursor-not-allowed" title="Tính năng xem đáp án hiện đang tạm ẩn">
+                        🔒 Đáp án tạm ẩn
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KHUNG ĐỀ THI CHÍNH THỨC - CẤU TRÚC PHÔI THẬT HUIT -->
+    <div class="max-w-5xl mx-auto w-full bg-white rounded-xl shadow-lg border border-slate-300 p-8 sm:p-12 print-container flex-grow">
+        
+        <!-- Header đề thi -->
+        <div class="flex flex-col sm:flex-row justify-between items-start text-xs sm:text-sm font-semibold border-b-2 border-black pb-4 mb-4">
+            <div class="text-center sm:text-left mb-4 sm:mb-0">
+                <span class="block uppercase font-bold text-xs tracking-tight">Bộ Công Thương</span>
+                <span class="block uppercase font-bold text-xs tracking-tight">Trường Đại học Công Thương TP.HCM</span>
+                <span class="block uppercase font-bold text-xs tracking-tight">Khoa Công nghệ Thông tin</span>
+                <span class="block text-[10px] text-slate-500 mt-1 italic no-print">(Lưu ý: Điền thông tin bên trên để đồng bộ tự động)</span>
+            </div>
+            <div class="text-center sm:text-right w-full sm:w-auto">
+                <span class="block uppercase font-bold text-xs text-emerald-800 print-black">Đề thi thử nghiệm tự luận cuối kỳ</span>
+                <span class="block text-xs font-bold mt-1">Môn học: Hệ quản trị cơ sở dữ liệu</span>
+                <span class="block text-[11px] text-slate-600 font-normal">Học kỳ II - Năm học 2025 – 2026</span>
+                <span class="block text-xs font-bold text-slate-700 mt-1">Thời gian làm bài: 75 phút</span>
+            </div>
+        </div>
+
+        <!-- Khung điền thông tin thí sinh (Chuẩn HUIT) -->
+        <div class="border border-black p-4 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-semibold print-border">
+            <div>
+                Họ và tên thí sinh: <span id="display-name" class="border-b border-dashed border-slate-400 font-bold px-1 text-slate-800">Nguyễn Văn A</span>
+            </div>
+            <div>
+                Mã số sinh viên (MSSV): <span id="display-id" class="border-b border-dashed border-slate-400 font-bold px-1 text-slate-800">2001240001</span>
+            </div>
+            <div>
+                Lớp học phần đăng ký: <span id="display-class" class="border-b border-dashed border-slate-400 font-bold px-1 text-slate-800">HQTCSDL_S4_1-3</span>
+            </div>
+            <div>
+                Số máy tính thực hành: .............................................................
+            </div>
+            <div class="sm:col-span-2 grid grid-cols-2 border-t border-slate-300 pt-3 mt-1">
+                <div>Chữ ký Giám thị 1: .......................................</div>
+                <div>Chữ ký Giám thị 2: .......................................</div>
+            </div>
+        </div>
+
+        <!-- Khung điểm số dành cho giám khảo chấm bài -->
+        <table class="w-full border-collapse border border-black mb-8 text-center text-xs font-bold print-border">
+            <thead>
+                <tr class="bg-slate-50">
+                    <th class="border border-black p-2 w-[16%]">Câu 1 (2.0đ)</th>
+                    <th class="border border-black p-2 w-[16%]">Câu 2 (2.0đ)</th>
+                    <th class="border border-black p-2 w-[16%]">Câu 3 (3.0đ)</th>
+                    <th class="border border-black p-2 w-[16%]">Câu 4 (3.0đ)</th>
+                    <th class="border border-black p-2 w-[16%]">TỔNG ĐIỂM</th>
+                    <th class="border border-black p-2">Chữ ký Giám khảo chấm thi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="border border-black h-12"></td>
+                    <td class="border border-black h-12"></td>
+                    <td class="border border-black h-12"></td>
+                    <td class="border border-black h-12"></td>
+                    <td class="border border-black h-12"></td>
+                    <td class="border border-black h-12 text-left p-2 font-normal text-[10px] text-slate-400 valign-bottom flex flex-col justify-end">
+                        <div class="mt-auto">Họ tên: ..........................................</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Tiêu đề đề thi -->
+        <div class="text-center mb-8">
+            <h3 class="text-base font-bold uppercase tracking-wide">NỘI DUNG ĐỀ THI VÀ ĐÁP ÁN</h3>
+            <span class="text-xs italic text-slate-500 block mt-1">(Đề thi gồm 4 câu tự luận chuyên sâu về Chương 4 và Chương 5)</span>
+        </div>
+
+        <!-- Phần mô tả cơ sở dữ liệu dùng chung -->
+        <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg mb-8 text-xs leading-relaxed print-border print-transparent">
+            <strong class="text-slate-800 text-sm block mb-2">📌 Mô tả cơ sở dữ liệu dùng chung (Hệ thống Quản lý Khách sạn "QL_KhachSan")</strong>
+            <p class="mb-3">CSDL được thiết kế đồng bộ cho toàn bộ các câu hỏi trong đề thi bao gồm các bảng quan hệ dưới đây (Khóa chính được gạch dưới):</p>
+            <ul class="space-y-1.5 font-mono text-slate-700 list-disc pl-5">
+                <li><strong>KHACHHANG</strong> (<span class="underline">MaKH</span>, HoTen, DiaChi, SoDienThoai, LoaiKH)</li>
+                <li><strong>PHONG</strong> (<span class="underline">MaPhong</span>, TenPhong, LoaiPhong, TinhTrang, GiaPhong)</li>
+                <li><strong>PHIEUDAT</strong> (<span class="underline">MaPD</span>, NgayDat, NgayTra, TrangThai, MaKH)</li>
+                <li><strong>CT_PHIEUDAT</strong> (<span class="underline">MaPD</span>, <span class="underline">MaPhong</span>, SoLuongPhong, DonGia)</li>
+            </ul>
+            <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-500 border-t border-slate-200 pt-2">
+                <div>• <strong>LoaiKH:</strong> Thường, Thân thiết, VIP</div>
+                <div>• <strong>LoaiPhong:</strong> Standard, Superior, Deluxe, Suite</div>
+                <div>• <strong>TinhTrang:</strong> Trống, Đang ở, Đang sửa chữa</div>
+                <div>• <strong>TrangThai:</strong> Đã thanh toán, Chưa thanh toán, Đã hủy, Đã nhận phòng</div>
+            </div>
+        </div>
+
+        <!-- DANH SÁCH CÁC CÂU HỎI -->
+        <div class="space-y-10">
+
+            <!-- CÂU 1 -->
+            <div class="question-node">
+                <div class="flex justify-between items-start border-b border-slate-200 pb-2 mb-4">
+                    <h4 class="text-base font-bold text-slate-800 flex items-center gap-1.5">
+                        <span class="text-emerald-700">Câu 1:</span> Quản trị phân quyền bảo mật T-SQL (2.0 điểm)
+                    </h4>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">CLO1 - C4</span>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                    Hãy viết các câu lệnh T-SQL trong SQL Server để thực thi kịch bản phân quyền cho bộ phận Lễ tân hoạt động trên cơ sở dữ liệu <code class="font-mono bg-slate-100 px-1 py-0.5 rounded text-xs text-rose-600">QL_KhachSan</code>:
+                </p>
+                <ul class="list-decimal pl-5 space-y-2 text-sm text-slate-600 leading-relaxed mb-6">
+                    <li>Tạo một nhóm vai trò người dùng (Database Role) có tên là <strong class="font-mono text-xs">Nhom_LeTan</strong>.</li>
+                    <li>Cấp quyền cho nhóm <strong class="font-mono text-xs">Nhom_LeTan</strong> được phép xem (<strong class="font-mono text-xs">SELECT</strong>) dữ liệu trên tất cả 4 bảng chính, riêng 2 bảng <strong class="font-mono text-xs">PHIEUDAT</strong> và <strong class="font-mono text-xs text-teal-600">CT_PHIEUDAT</strong> thì có thêm quyền thêm (<strong class="font-mono text-xs">INSERT</strong>) và sửa (<strong class="font-mono text-xs">UPDATE</strong>).</li>
+                    <li>Tạo một tài khoản đăng nhập máy chủ mới có tên là <strong class="font-mono text-xs text-teal-600">MinhTran</strong> mật khẩu <strong class="font-mono text-xs text-teal-600">'Minh@123'</strong>, sau đó tạo User tương ứng là <strong class="font-mono text-xs">MinhTran_User</strong> trong Database.</li>
+                    <li>Thêm người dùng <strong class="font-mono text-xs">MinhTran_User</strong> vào nhóm quyền <strong class="font-mono text-xs">Nhom_LeTan</strong> để thừa hưởng các đặc quyền.</li>
+                </ul>
+
+                <!-- Scratchpad tương tác -->
+                <div class="no-print mb-4">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">📝 Giấy nháp viết code của thí sinh (Tự lưu trạng thái)</label>
+                    <textarea id="draft-c1" class="draft-area" placeholder="-- Viết nháp mã lệnh SQL của bạn tại đây..."></textarea>
+                </div>
+
+                <!-- Barem đáp án gấp mở -->
+                <div class="no-print">
+                    <button disabled class="bg-emerald-50 text-emerald-800 text-xs px-3.5 py-1.5 rounded-lg border border-emerald-200 transition-all font-semibold flex items-center gap-1 opacity-60 cursor-not-allowed" title="Đáp án đang tạm vô hiệu">
+                        🔒 Đáp Án Tạm Ẩn
+                    </button>
+                    <div id="barem-c1" class="hidden mt-3 bg-emerald-50/40 border border-emerald-100 rounded-lg p-4 text-xs">
+                        <div class="bg-amber-100 text-amber-800 p-2.5 rounded font-semibold mb-3 border border-amber-200">
+                            <strong>Thang điểm chấm:</strong> Tạo Role & Cấp quyền đúng: 1.0đ • Tạo Login & User đúng: 0.5đ • ALTER ROLE gán user đúng: 0.5đ.
+                        </div>
+                        <div class="code-block leading-relaxed" id="code-c1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CÂU 2 -->
+            <div class="question-node print-page-break">
+                <div class="flex justify-between items-start border-b border-slate-200 pb-2 mb-4">
+                    <h4 class="text-base font-bold text-slate-800 flex items-center gap-1.5">
+                        <span class="text-emerald-700">Câu 2:</span> Sao lưu và Phục hồi sau sự cố vật lý (2.0 điểm)
+                    </h4>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">CLO1 - C4</span>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                    CSDL khách sạn đang cấu hình ở chế độ <strong class="text-slate-800">Full Recovery Model</strong> thì đĩa cứng lưu tệp tin chính mdf gặp sự cố cháy nổ nghiêm trọng vào lúc <strong class="text-rose-600 font-bold">16:30 PM</strong>. Tập tin Transaction Log (.ldf) vẫn hoạt động nguyên vẹn. Các bản sao lưu định kỳ trong ngày bao gồm:
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4 text-xs font-semibold text-center">
+                    <div class="bg-slate-100 p-2 rounded">01:00 AM<br><span class="text-slate-500 font-normal">Full Backup</span></div>
+                    <div class="bg-slate-100 p-2 rounded">07:00 AM<br><span class="text-slate-500 font-normal">Diff Backup</span></div>
+                    <div class="bg-slate-100 p-2 rounded">11:00 AM<br><span class="text-slate-500 font-normal">Log Backup Lần 1</span></div>
+                    <div class="bg-slate-100 p-2 rounded">15:00 PM<br><span class="text-slate-500 font-normal">Log Backup Lần 2</span></div>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                    Hãy viết các lệnh T-SQL để thực hiện:
+                </p>
+                <ul class="list-alpha pl-5 space-y-2 text-sm text-slate-600 leading-relaxed mb-6">
+                    <li>Sao lưu phần đuôi nhật ký giao tác khẩn cấp (<strong class="text-rose-600 font-bold">Tail-Log Backup</strong>) lưu trữ vào tệp tin <code class="font-mono text-xs">'D:\Backup\Tail_Hotel.trn'</code>.</li>
+                    <li>Thực hiện chuỗi lệnh phục hồi toàn diện hệ thống sao cho giảm thiểu tối đa lượng giao dịch bị thất thoát từ sau 15:00 đến trước lúc thảm họa xảy ra. Giải thích ý nghĩa của thuộc tính <code class="font-mono text-xs">NORECOVERY</code>.</li>
+                </ul>
+
+                <!-- Scratchpad tương tác -->
+                <div class="no-print mb-4">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">📝 Giấy nháp viết code của thí sinh (Tự lưu trạng thái)</label>
+                    <textarea id="draft-c2" class="draft-area" placeholder="-- Viết nháp mã lệnh SQL khôi phục tại đây..."></textarea>
+                </div>
+
+                <!-- Barem đáp án -->
+                <div class="no-print">
+                    <button disabled class="bg-emerald-50 text-emerald-800 text-xs px-3.5 py-1.5 rounded-lg border border-emerald-200 transition-all font-semibold flex items-center gap-1 opacity-60 cursor-not-allowed" title="Đáp án đang tạm vô hiệu">
+                        🔒 Đáp Án Tạm Ẩn
+                    </button>
+                    <div id="barem-c2" class="hidden mt-3 bg-emerald-50/40 border border-emerald-100 rounded-lg p-4 text-xs">
+                        <div class="bg-amber-100 text-amber-800 p-2.5 rounded font-semibold mb-3 border border-amber-200">
+                            <strong>Thang điểm chấm:</strong> Viết đúng câu lệnh Tail-log: 0.5đ • Thứ tự phục hồi Full -> Diff -> Log -> Tail-log đúng đắn kèm kiểm soát NORECOVERY/RECOVERY: 1.5đ.
+                        </div>
+                        <div class="code-block leading-relaxed" id="code-c2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CÂU 3 -->
+            <div class="question-node print-page-break">
+                <div class="flex justify-between items-start border-b border-slate-200 pb-2 mb-4">
+                    <h4 class="text-base font-bold text-slate-800 flex items-center gap-1.5">
+                        <span class="text-emerald-700">Câu 3:</span> Giao tác đồng thời và Đồ thị tương tranh (3.0 điểm)
+                    </h4>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">CLO1 - C5</span>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                    Cho một lịch trình thực thi giao dịch đồng thời $S$ chứa ba giao tác hoạt động trên hai vùng nhớ vật lý $A$ và $B$ như sau:
+                </p>
+                <div class="bg-slate-100 font-mono text-xs p-3 rounded text-center border border-slate-200 text-slate-700 font-bold mb-6">
+                    S = {R1(A), R2(B), W1(A), R3(A), W2(B), W3(A), R1(B), W1(B)}
+                </div>
+
+                <!-- Thiết bị mô phỏng tương tranh xung đột ngay trên đề thi -->
+                <div class="no-print bg-slate-50 border border-slate-200 rounded-xl p-6 mb-6">
+                    <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">🛠️ Mô Phỏng Các Bước Chạy Lịch Trình Thực Tế (Tương Tác)</h5>
+                    <p class="text-xs text-slate-600 mb-4">Nhấp nút "Bước Tiếp Theo" để theo dõi hành động ghi/đọc tài nguyên và xem xung đột phát sinh trực quan.</p>
+                    <div class="flex flex-wrap gap-4 items-center mb-4">
+                        <button onclick="exam.stepForward()" class="bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold py-1.5 px-3 rounded shadow transition-all">Bước Tiếp Theo ➡️</button>
+                        <button onclick="exam.stepReset()" class="bg-slate-200 hover:bg-slate-300 text-slate-600 text-xs font-bold py-1.5 px-3 rounded transition-all">Đặt Lại Mô Phỏng</button>
+                        <span class="text-xs font-semibold text-slate-500">Mốc thời gian hiện tại: <strong id="step-counter" class="text-teal-600">0 / 8</strong></span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-semibold">
+                        <div class="bg-white p-3 rounded border border-slate-200">
+                            <span class="text-rose-600 font-bold">Giao tác T1</span>
+                            <div id="sim-t1" class="mt-2 text-slate-600">-</div>
+                        </div>
+                        <div class="bg-white p-3 rounded border border-slate-200">
+                            <span class="text-teal-600 font-bold">Giao tác T2</span>
+                            <div id="sim-t2" class="mt-2 text-slate-600">-</div>
+                        </div>
+                        <div class="bg-white p-3 rounded border border-slate-200">
+                            <span class="text-amber-600 font-bold">Giao tác T3</span>
+                            <div id="sim-t3" class="mt-2 text-slate-600">-</div>
+                        </div>
+                    </div>
+                    <div id="sim-log" class="mt-3 bg-slate-800 text-emerald-400 p-2.5 rounded font-mono text-[11px] min-h-[36px]">
+                        Hãy bấm "Bước Tiếp Theo" để bắt đầu...
+                    </div>
+                </div>
+
+                <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                    Hãy thực hiện các yêu cầu học thuật sau:
+                </p>
+                <ul class="list-alpha pl-5 space-y-2 text-sm text-slate-600 leading-relaxed mb-6">
+                    <li>Biểu diễn lịch trình $S$ trên dưới dạng bảng phân bố thao tác theo từng giao tác từ trên xuống dưới.</li>
+                    <li>Lập luận phân tích các cặp thao tác xung đột vật lý tồn tại, vẽ đồ thị tuần tự $P(S)$ và kết luận xem lịch trình $S$ có đạt tính chất khả tuần tự xung đột hay không?</li>
+                    <li>Kiểm tra xem lịch biểu gốc $S$ có tương đương view với lịch biểu tuần tự hoàn toàn $S' = (T_2, T_1, T_3)$ hay không? Giải thích cụ thể dựa trên barem chuẩn của HUIT.</li>
+                </ul>
+
+                <!-- Scratchpad tương tác -->
+                <div class="no-print mb-4">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">📝 Giấy nháp vẽ đồ thị & giải bài (Tự lưu trạng thái)</label>
+                    <textarea id="draft-c3" class="draft-area" placeholder="-- Ghi lại lời giải nháp hoặc chỉ ra các cặp xung đột tại đây..."></textarea>
+                </div>
+
+                <!-- Barem đáp án -->
+                <div class="no-print">
+                    <button disabled class="bg-emerald-50 text-emerald-800 text-xs px-3.5 py-1.5 rounded-lg border border-emerald-200 transition-all font-semibold flex items-center gap-1 opacity-60 cursor-not-allowed" title="Đáp án đang tạm vô hiệu">
+                        🔒 Đáp Án Tạm Ẩn
+                    </button>
+                    <div id="barem-c3" class="hidden mt-3 bg-emerald-50/40 border border-emerald-100 rounded-lg p-4 text-xs">
+                        <div class="bg-amber-100 text-amber-800 p-2.5 rounded font-semibold mb-3 border border-amber-200">
+                            <strong>Thang điểm chấm:</strong> Chuyển bảng chính xác: 1.0đ • Liệt kê xung đột, vẽ đồ thị tuần tự và kết luận chuẩn: 1.0đ • Chứng minh không tương đương View chính xác: 1.0đ.
+                        </div>
+                        <div class="text-slate-700 space-y-4">
+                            <div>
+                                <strong class="block text-slate-800 mb-1">a) Biểu diễn lịch biểu S dạng bảng:</strong>
+                                <table class="border-collapse border border-slate-300 text-center w-full max-w-sm text-[11px] font-mono">
+                                    <thead>
+                                        <tr class="bg-slate-100">
+                                            <th class="border border-slate-300 p-1">Bước</th>
+                                            <th class="border border-slate-300 p-1 text-rose-600">T1</th>
+                                            <th class="border border-slate-300 p-1 text-teal-600">T2</th>
+                                            <th class="border border-slate-300 p-1 text-amber-600">T3</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="border border-slate-300">1</td><td class="border border-slate-300 font-bold">Read(A)</td><td class="border border-slate-300"></td><td class="border border-slate-300"></td></tr>
+                                        <tr><td class="border border-slate-300">2</td><td class="border border-slate-300"></td><td class="border border-slate-300 font-bold">Read(B)</td><td class="border border-slate-300"></td></tr>
+                                        <tr><td class="border border-slate-300">3</td><td class="border border-slate-300 font-bold">Write(A)</td><td class="border border-slate-300"></td><td class="border border-slate-300"></td></tr>
+                                        <tr><td class="border border-slate-300">4</td><td class="border border-slate-300"></td><td class="border border-slate-300"></td><td class="border border-slate-300 font-bold">Read(A)</td></tr>
+                                        <tr><td class="border border-slate-300">5</td><td class="border border-slate-300"></td><td class="border border-slate-300 font-bold">Write(B)</td><td class="border border-slate-300"></td></tr>
+                                        <tr><td class="border border-slate-300">6</td><td class="border border-slate-300"></td><td class="border border-slate-300"></td><td class="border border-slate-300 font-bold">Write(A)</td></tr>
+                                        <tr><td class="border border-slate-300">7</td><td class="border border-slate-300 font-bold">Read(B)</td><td class="border border-slate-300"></td><td class="border border-slate-300"></td></tr>
+                                        <tr><td class="border border-slate-300">8</td><td class="border border-slate-300 font-bold">Write(B)</td><td class="border border-slate-300"></td><td class="border border-slate-300"></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="border-t border-slate-200 pt-3">
+                                <strong class="block text-slate-800 mb-1">b) Phân tích cặp xung đột và vẽ Đồ thị tuần tự:</strong>
+                                <ul class="list-disc pl-5 space-y-1.5">
+                                    <li>Xét tài nguyên dữ liệu $A$: Thao tác $W_1(A)$ ở bước 3 đứng trước và xung đột với $R_3(A)$ ở bước 4 $\rightarrow$ Sinh cung định hướng: <strong>T1 $\rightarrow$ T3</strong>.</li>
+                                    <li>Xét tài nguyên dữ liệu $B$: Thao tác $W_2(B)$ ở bước 5 đứng trước và xung đột với $R_1(B)$ ở bước 7 $\rightarrow$ Sinh cung định hướng: <strong>T2 $\rightarrow$ T1</strong>.</li>
+                                </ul>
+                                <p class="mt-2 font-semibold">Đồ thị tuần tự kết quả: T2 $\rightarrow$ T1 $\rightarrow$ T3. Đồ thị hoàn toàn phi chu trình (không chứa vòng lặp khép kín), do đó lịch biểu $S$ khả tuần tự xung đột.</p>
+                            </div>
+                            <div class="border-t border-slate-200 pt-3">
+                                <strong class="block text-slate-800 mb-1">c) Kiểm tra tính tương đương View với $S' = (T_2, T_1, T_3)$:</strong>
+                                <p class="mb-2">Một lịch trình tương đương View bắt buộc phải thỏa mãn 3 điều kiện: (1) Đọc dữ liệu ban đầu, (2) Đọc giá trị từ giao tác ghi trước đó, (3) Ghi dữ liệu cuối cùng.</p>
+                                <ul class="list-decimal pl-5 space-y-1.5">
+                                    <li>Trong lịch biểu gốc $S$: $T_1$ thực hiện đọc tài nguyên $A$ ban đầu ($R_1(A)$). Trong lịch trình tuần tự $S' = (T_2, T_1, T_3)$, giao tác $T_2$ thực hiện trước, sau đó mới tới $T_1$, do đó $T_1$ vẫn đọc $A$ ban đầu trước khi có ai ghi đè lên $A$ $\rightarrow$ <strong>Thỏa mãn điều kiện đọc ban đầu</strong>.</li>
+                                    <li>Trong lịch biểu gốc $S$: $T_2$ ghi cuối cùng trên biến dữ liệu $B$ ($W_2(B)$) trước khi kết thúc giao tác, tuy nhiên sau đó $T_1$ nhảy vào ghi đè ở bước 8 ($W_1(B)$) nên $T_1$ mới là Final Write trên $B$. Còn trong lịch tuần tự $S'$, $T_1$ chạy trước $T_3$, và $T_3$ không ghi gì trên $B$, giao tác ghi cuối cùng trên $B$ vẫn là $T_1$ $\rightarrow$ <strong>Thỏa mãn điều kiện Ghi cuối cùng</strong>.</li>
+                                </ul>
+                                <p class="mt-2 font-bold text-emerald-800">Kết luận: Lịch biểu $S$ đạt tính chất tương đương View với lịch tuần tự $S' = (T_2, T_1, T_3)$.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CÂU 4 -->
+            <div class="question-node print-page-break">
+                <div class="flex justify-between items-start border-b border-slate-200 pb-2 mb-4">
+                    <h4 class="text-base font-bold text-slate-800 flex items-center gap-1.5">
+                        <span class="text-emerald-700">Câu 4:</span> Lý thuyết tranh chấp tương tranh và Mức cô lập (3.0 điểm)
+                    </h4>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">CLO1 - C5</span>
+                </div>
+                <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                    <p>
+                        Hãy trả lời chi tiết hai câu hỏi lý thuyết học thuật sau:
+                    </p>
+                    <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                        <strong>a) (1.5 điểm):</strong> Mô tả chi tiết hiện tượng đọc dữ liệu chưa chính thức (<strong class="text-rose-600 font-bold">Dirty Read - Đọc dữ liệu rác</strong>). Hãy đưa ra một kịch bản tình huống thực tế cụ thể mô tả lỗi này trong nghiệp vụ đặt phòng khách sạn giữa 2 giao tác $T_1$ (nhân viên lễ tân đặt phòng) và $T_2$ (khách hàng kiểm tra trạng thái phòng trực tuyến).
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                        <strong>b) (1.5 điểm):</strong> Phân tích sự khác biệt về cơ chế thiết lập khóa chia sẻ (S-Lock) và khóa độc quyền (X-Lock) để ngăn chặn các lỗi tương tranh khi nâng cấu hình mức độ cô lập từ <strong class="font-mono text-xs">READ COMMITTED</strong> lên <strong class="font-mono text-xs text-emerald-600">REPEATABLE READ</strong>.
+                    </div>
+                </div>
+
+                <!-- Scratchpad tương tác -->
+                <div class="no-print mb-4 mt-4">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">📝 Giấy nháp trình bày lý thuyết của thí sinh (Tự lưu trạng thái)</label>
+                    <textarea id="draft-c4" class="draft-area" placeholder="-- Trình bày lập luận ví dụ Dirty Read và cơ chế khóa tại đây..."></textarea>
+                </div>
+
+                <!-- Barem đáp án -->
+                <div class="no-print">
+                    <button disabled class="bg-emerald-50 text-emerald-800 text-xs px-3.5 py-1.5 rounded-lg border border-emerald-200 transition-all font-semibold flex items-center gap-1 opacity-60 cursor-not-allowed" title="Đáp án đang tạm vô hiệu">
+                        🔒 Đáp Án Tạm Ẩn
+                    </button>
+                    <div id="barem-c4" class="hidden mt-3 bg-emerald-50/40 border border-emerald-100 rounded-lg p-4 text-xs">
+                        <div class="bg-amber-100 text-amber-800 p-2.5 rounded font-semibold mb-3 border border-amber-200">
+                            <strong>Thang điểm chấm:</strong> Trình bày đúng khái niệm & kịch bản ví dụ Dirty Read đạt chuẩn: 1.5đ • Nêu đúng cơ chế thiết lập khóa và thời gian giữ khóa của 2 mức cô lập: 1.5đ.
+                        </div>
+                        <div class="text-slate-700 space-y-4 leading-relaxed">
+                            <div>
+                                <strong class="block text-slate-800 mb-1">a) Khái niệm Dirty Read & Kịch bản thực tế khách sạn:</strong>
+                                <p class="mb-2"><strong>Dirty Read:</strong> Xảy ra khi giao tác $T_1$ sửa một giá trị dữ liệu nào đó nhưng chưa thực hiện COMMIT. Giao tác $T_2$ vào đọc giá trị này (đọc dữ liệu chưa chính thức). Sau đó, $T_1$ gặp lỗi và phải ROLLBACK hoàn tác. Kết quả là giá trị dữ liệu mà $T_2$ vừa đọc hoàn toàn biến mất khỏi hệ thống và bị coi là dữ liệu rác.</p>
+                                <p class="font-semibold underline">Kịch bản tương tranh thực tế tại khách sạn:</p>
+                                <table class="border-collapse border border-slate-300 text-center w-full max-w-md text-xs mt-2">
+                                    <thead>
+                                        <tr class="bg-slate-100">
+                                            <th class="border border-slate-300 p-1">Bước</th>
+                                            <th class="border border-slate-300 p-1">Lễ tân ($T_1$)</th>
+                                            <th class="border border-slate-300 p-1">Khách hàng ($T_2$)</th>
+                                            <th class="border border-slate-300 p-1">Trạng thái phòng 'P101'</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td class="border border-slate-300">1</td><td class="border border-slate-300 text-left">UPDATE Phòng 'P101' thành 'Đang ở'</td><td class="border border-slate-300"></td><td class="border border-slate-300 font-mono font-bold text-red-600">Đang ở (Chưa COMMIT)</td></tr>
+                                        <tr><td class="border border-slate-300">2</td><td class="border border-slate-300"></td><td class="border border-slate-300 text-left">SELECT phòng 'P101' thấy tình trạng 'Đang ở'</td><td class="border border-slate-300">Đang ở</td></tr>
+                                        <tr><td class="border border-slate-300">3</td><td class="border border-slate-300 text-left font-bold text-rose-600">Gặp sự cố, ROLLBACK</td><td class="border border-slate-300"></td><td class="border border-slate-300 font-mono font-bold text-emerald-600">Trống (Hoàn tác)</td></tr>
+                                        <tr><td class="border border-slate-300">4</td><td class="border border-slate-300"></td><td class="border border-slate-300 text-left font-bold text-rose-600">Lỗi Dirty Read: Khách hàng nghĩ phòng đã có người ở và bỏ đi, trong khi phòng thực tế vẫn trống.</td><td class="border border-slate-300">Trống</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="border-t border-slate-200 pt-3">
+                                <strong class="block text-slate-800 mb-1">b) Cơ chế khóa biệt lập giữa READ COMMITTED và REPEATABLE READ:</strong>
+                                <ul class="list-disc pl-5 space-y-2">
+                                    <li><strong>Mức độ cô lập READ COMMITTED:</strong> Chỉ cho phép đọc các dữ liệu đã COMMIT. SQL Server áp dụng khóa S-Lock lên dòng dữ liệu khi tiến hành câu lệnh SELECT đọc dòng đó, nhưng ngay sau khi thao tác đọc hoàn tất ở dòng hiện tại, khóa S-Lock lập tức bị nhả ra để giao tác khác sửa đổi dữ liệu. Điều này ngăn chặn hoàn toàn Dirty Read nhưng chưa thể ngăn chặn lỗi Non-repeatable Read.</li>
+                                    <li><strong>Mức độ cô lập REPEATABLE READ:</strong> Đảm bảo dữ liệu đã đọc sẽ không bị sửa đổi trong suốt giao tác. SQL Server tiến hành đặt khóa S-Lock lên dòng dữ liệu và <strong>giữ chặt khóa này đến hết giao tác</strong> (cho đến khi COMMIT hoặc ROLLBACK được gọi chính thức). Do khóa S-Lock được giữ cố định nên không một giao tác nào khác có thể xin khóa độc quyền X-Lock để chỉnh sửa dữ liệu gốc $\rightarrow$ Giải quyết triệt để lỗi Non-repeatable Read.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Chân trang của tờ đề thi giấy -->
+        <div class="mt-12 pt-4 border-t border-black text-center text-xs font-bold print-border">
+            <span>--- HẾT ĐỀ THI ---</span>
+            <span class="block font-normal text-[10px] text-slate-500 italic mt-1">(Giám thị coi thi không giải thích gì thêm, chúc các bạn làm bài đạt kết quả tốt nhất)</span>
+        </div>
+
+    </div>
+
+    <!-- KHU VỰC BẢN QUYỀN VÀ THÔNG TIN BỔ SUNG TRÊN TRÌNH DUYỆT -->
+    <footer class="max-w-5xl mx-auto w-full text-center text-xs text-slate-400 mt-8 py-4 border-t border-slate-200 no-print">
+        <p>Học phần: Hệ quản trị cơ sở dữ liệu (Database Management System)</p>
+        <p class="mt-1">© 2026 Bản quyền thuộc về Bộ môn Hệ thống thông tin - Khoa CNTT - HUIT.</p>
+    </footer>
+
+    <!-- ĐOẠN SCRIPT TƯƠNG TÁC THỜI GIAN THỰC -->
+    <script>
+        const sqlCodes = {
+            c1: `-- GIAI ĐOẠN 1: Tạo nhóm quyền (Role) hệ thống\nCREATE ROLE Nhom_LeTan;\nGO\n\n-- GIAI ĐOẠN 2: Cấp quyền SELECT trên toàn bộ các bảng, quyền INSERT, UPDATE cho PHIEUDAT & CT_PHIEUDAT\nGRANT SELECT ON KHACHHANG TO Nhom_LeTan;\nGRANT SELECT ON PHONG TO Nhom_LeTan;\nGRANT SELECT, INSERT, UPDATE ON PHIEUDAT TO Nhom_LeTan;\nGRANT SELECT, INSERT, UPDATE ON CT_PHIEUDAT TO Nhom_LeTan;\nGO\n\n-- GIAI ĐOẠN 3: Tạo thông tin xác thực cho nhân viên mới đầu tiên\nCREATE LOGIN MinhTran WITH PASSWORD = 'Minh@123';\nGO\nCREATE USER MinhTran_User FOR LOGIN MinhTran;\nGO\n\n-- GIAI ĐOẠN 4: Đưa User đại diện vào Role\nALTER ROLE Nhom_LeTan ADD MEMBER MinhTran_User;\nGO\n-- Cách thêm nhân viên khác tương tự:\n-- Chỉ cần thực thi lệnh CREATE LOGIN/USER cho nhân viên tiếp theo \n-- và ADD MEMBER vào Role Nhom_LeTan.`,
+            
+            c2: `-- a) Thực hiện sao lưu phần đuôi nhật ký giao tác khẩn cấp\nBACKUP LOG QL_KhachSan \nTO DISK = 'D:\\Backup\\Tail_Hotel.trn' \nWITH NO_TRUNCATE, NORECOVERY;\nGO\n\n-- b) Khôi phục toàn bộ hệ thống tuần tự giảm mất mát tối thiểu\n-- Bước 1: Phục hồi bản Full Backup\nRESTORE DATABASE QL_KhachSan \nFROM DISK = 'D:\\Backup\\Full_Hotel.bak' \nWITH NORECOVERY;\nGO\n\n-- Bước 2: Phục hồi bản Differential Backup\nRESTORE DATABASE QL_KhachSan \nFROM DISK = 'D:\\Backup\\Diff_Hotel_07.bak' \nWITH NORECOVERY;\nGO\n\n-- Bước 3: Phục hồi Log Backup Lần 1\nRESTORE LOG QL_KhachSan \nFROM DISK = 'D:\\Backup\\Log_Hotel_11.trn' \nWITH NORECOVERY;\nGO\n\n-- Bước 4: Phục hồi Log Backup Lần 2\nRESTORE LOG QL_KhachSan \nFROM DISK = 'D:\\Backup\\Log_Hotel_15.trn' \nWITH NORECOVERY;\nGO\n\n-- Bước 5: Phục hồi bản sao lưu Tail Log và đưa CSDL online trở lại\nRESTORE LOG QL_KhachSan \nFROM DISK = 'D:\\Backup\\Tail_Hotel.trn' \nWITH RECOVERY;\nGO\n-- Giải thích NORECOVERY: \n-- Dùng để báo hiệu cho SQL Server biết chuỗi khôi phục vẫn còn tiếp tục nạp \n-- tệp tin khác, ngăn không cho CSDL trực tuyến sớm làm hỏng tiến trình.`
+        };
+
+        const simulationSteps = [
+            { t: 0, text: "Bắt đầu khởi động lịch trình thực tế..." },
+            { t: 1, t1: "Read(A)", t2: "-", t3: "-", text: "Bước 1: T1 thực hiện Đọc biến A từ đĩa. T1 nắm giữ khóa Shared Lock (S-Lock) trên vùng dữ liệu A." },
+            { t: 2, t1: "Read(A)", t2: "Read(B)", t3: "-", text: "Bước 2: T2 thực hiện Đọc biến B. T2 giữ khóa Shared Lock (S-Lock) trên vùng dữ liệu B." },
+            { t: 3, t1: "Write(A)", t2: "Read(B)", t3: "-", text: "Bước 3: T1 thực hiện Ghi (Write) vào A. T1 xin nâng cấp khóa từ Shared lên Exclusive Lock (X-Lock) trên A." },
+            { t: 4, t1: "Write(A)", t2: "Read(B)", t3: "Read(A)", text: "Bước 4: T3 xin Đọc biến A. Vì T1 đã Write(A) ở bước trước, T3 sẽ bị chặn hoặc chờ nếu T1 chưa COMMIT." },
+            { t: 5, t1: "Write(A)", t2: "Write(B)", t3: "Read(A)", text: "Bước 5: T2 thực hiện Ghi (Write) vào biến B. T2 xin khóa Exclusive Lock (X-Lock) trên B." },
+            { t: 6, t1: "Write(A)", t2: "Write(B)", t3: "Write(A)", text: "Bước 6: T3 thực hiện Ghi (Write) vào biến A. Phát sinh xung đột ghi đè giữa các giao tác." },
+            { t: 7, t1: "Read(B)", t2: "Write(B)", t3: "Write(A)", text: "Bước 7: T1 xin quay lại đọc biến B. Do T2 đã Write(B) ở bước 5, T1 xin khóa S-Lock nhưng bị chặn bởi X-Lock của T2." },
+            { t: 8, t1: "Write(B)", t2: "Write(B)", t3: "Write(A)", text: "Bước 8: T1 Ghi (Write) lên B và hoàn tất toàn bộ chu kỳ lịch trình đồng thời S." }
+        ];
+
+        const exam = {
+            state: {
+                timer: null,
+                timeLeft: 75 * 60, // 75 phút quy đổi giây
+                isRunning: false,
+                currentSimStep: 0
+            },
+
+            init: function() {
+                this.initChart();
+                this.loadDrafts();
+                this.syncInfo();
+                this.renderSQL();
+            },
+
+            initChart: function() {
+                const ctx = document.getElementById('pointsChart');
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['C1 (2.0đ)', 'C2 (2.0đ)', 'C3 (3.0đ)', 'C4 (3.0đ)'],
+                            datasets: [{
+                                data: [2.0, 2.0, 3.0, 3.0],
+                                backgroundColor: ['#059669', '#10b981', '#f59e0b', '#d97706'],
+                                borderColor: '#ffffff',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false }
+                            }
+                        }
+                    });
+                }
+            },
+
+            syncInfo: function() {
+                const name = document.getElementById('input-name').value;
+                const id = document.getElementById('input-id').value;
+                const className = document.getElementById('input-class').value;
+
+                document.getElementById('display-name').innerText = name || ".............................................................";
+                document.getElementById('display-id').innerText = id || ".............................................................";
+                document.getElementById('display-class').innerText = className || ".............................................................";
+            },
+
+            toggleTimer: function() {
+                const btn = document.getElementById('btn-timer-start');
+                if (this.state.isRunning) {
+                    clearInterval(this.state.timer);
+                    this.state.isRunning = false;
+                    btn.innerText = "Tiếp tục";
+                    btn.className = "bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs px-2.5 py-1.5 rounded transition-all";
+                } else {
+                    this.state.isRunning = true;
+                    btn.innerText = "Tạm dừng";
+                    btn.className = "bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs px-2.5 py-1.5 rounded transition-all";
+                    
+                    this.state.timer = setInterval(() => {
+                        this.state.timeLeft--;
+                        this.updateTimerDisplay();
+
+                        if (this.state.timeLeft <= 0) {
+                            clearInterval(this.state.timer);
+                            this.state.isRunning = false;
+                            document.getElementById('timer-display').innerText = "HẾT GIỜ!";
+                            document.getElementById('timer-display').classList.add('text-rose-600', 'animate-pulse');
+                            alert("Thời gian làm bài thi tự luyện đã kết thúc! Hãy thu dọn giấy và đối chiếu đáp án.");
+                        }
+                    }, 1000);
+                }
+            },
+
+            resetTimer: function() {
+                clearInterval(this.state.timer);
+                this.state.isRunning = false;
+                this.state.timeLeft = 75 * 60;
+                this.updateTimerDisplay();
+                
+                const btn = document.getElementById('btn-timer-start');
+                btn.innerText = "Bắt đầu";
+                btn.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-2.5 py-1.5 rounded transition-all";
+                
+                document.getElementById('timer-display').classList.remove('text-rose-600', 'animate-pulse');
+            },
+
+            updateTimerDisplay: function() {
+                const mins = Math.floor(this.state.timeLeft / 60);
+                const secs = this.state.timeLeft % 60;
+                document.getElementById('timer-display').innerText = 
+                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            },
+
+            toggleBarem: function(baremId) {
+                return; // Tạm thời vô hiệu hóa hiển thị đáp án
+            },
+
+            toggleAllBarem: function() {
+                return; // Tạm thời vô hiệu hóa chức năng hiện đáp án toàn bộ
+            },
+
+            stepForward: function() {
+                if (this.state.currentSimStep < 8) {
+                    this.state.currentSimStep++;
+                    this.updateSimulationUI();
+                } else {
+                    alert("Đã kết thúc chu trình lịch trình S.");
+                }
+            },
+
+            stepReset: function() {
+                this.state.currentSimStep = 0;
+                this.updateSimulationUI();
+            },
+
+            updateSimulationUI: function() {
+                const step = simulationSteps[this.state.currentSimStep];
+                document.getElementById('step-counter').innerText = `${this.state.currentSimStep} / 8`;
+                document.getElementById('sim-log').innerText = step.text;
+
+                document.getElementById('sim-t1').innerText = step.t1 || "-";
+                document.getElementById('sim-t2').innerText = step.t2 || "-";
+                document.getElementById('sim-t3').innerText = step.t3 || "-";
+            },
+
+            renderSQL: function() {
+                document.getElementById('code-c1').innerHTML = this.highlightSQL(sqlCodes.c1);
+                document.getElementById('code-c2').innerHTML = this.highlightSQL(sqlCodes.c2);
+            },
+
+            highlightSQL: function(code) {
+                return code
+                    .replace(/(CREATE ROLE|CREATE LOGIN|CREATE USER|GRANT|REVOKE|DENY|SELECT|INSERT|UPDATE|DELETE|BACKUP DATABASE|BACKUP LOG|RESTORE DATABASE|RESTORE LOG|FROM DISK|TO DISK|WITH PASSWORD|FOR LOGIN|ADD MEMBER|ALTER ROLE|WITH NORECOVERY|WITH RECOVERY|WITH NO_TRUNCATE|WITH INIT|WITH DIFFERENTIAL|GO)/g, '<span class="sql-keyword">$1</span>')
+                    .replace(/('[^']*')/g, '<span class="sql-string">$1</span>')
+                    .replace(/(QL_KhachSan|KHACHHANG|PHONG|PHIEUDAT|CT_PHIEUDAT|HOADON|MinhTran_User|Nhom_LeTan|Nhom_KeToan|Nhom_BanQuanLy)/g, '<span class="sql-object">$1</span>')
+                    .replace(/(@[a-zA-Z0-9_]+)/g, '<span class="sql-variable">$1</span>');
+            },
+
+            loadDrafts: function() {
+                document.querySelectorAll('.draft-area').forEach(area => {
+                    const id = area.id;
+                    const saved = localStorage.getItem(id);
+                    if (saved) area.value = saved;
+
+                    area.addEventListener('input', () => {
+                        localStorage.setItem(id, area.value);
+                    });
+                });
+            },
+
+            printExam: function() {
+                window.print();
+            }
+        };
+
+        window.onload = function() {
+            exam.init();
+        };
+    </script>
+</body>
+</html>

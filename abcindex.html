@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HUIT Dashboard — Hệ Quản Trị Cơ Sở Dữ Liệu</title>
+  <style>
+    :root {
+      --bg: #eef3fb;
+      --surface: #ffffff;
+      --surface-soft: #f5f9ff;
+      --primary: #0f172a;
+      --accent: #0f4f7b;
+      --accent-soft: #5d7b98;
+      --success: #047857;
+      --warning: #c2410c;
+      --muted: #4b5e75;
+      --border: #d7dee8;
+      --radius: 24px;
+      --shadow: 0 28px 65px rgba(15, 23, 42, 0.12);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--primary);
+      background: radial-gradient(circle at top left, rgba(15, 75, 123, 0.14), transparent 32%),
+                  radial-gradient(circle at 80% 10%, rgba(4, 120, 87, 0.08), transparent 20%),
+                  linear-gradient(180deg, #eff6ff 0%, #f8fafc 45%, #eef3fb 100%);
+      padding: 24px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      gap: 26px;
+    }
+
+    header {
+      display: grid;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(215, 222, 232, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 28px 32px 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 3.2rem);
+      line-height: 1.03;
+    }
+
+    .brand p {
+      margin: 14px 0 0;
+      max-width: 740px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: rgba(15, 75, 123, 0.09);
+      color: var(--accent);
+      font-weight: 700;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      transform: translateY(-1px);
+      background: rgba(15, 75, 123, 0.16);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.5fr 0.9fr;
+      gap: 24px;
+      padding: 0 32px 28px;
+    }
+
+    .hero-panel {
+      border-radius: var(--radius);
+      padding: 36px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, #f3f8ff 100%);
+      border: 1px solid rgba(15, 75, 123, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.55);
+    }
+
+    .hero-panel h2 {
+      margin: 0 0 18px;
+      font-size: clamp(2.2rem, 3.2vw, 2.9rem);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+
+    .hero-panel p {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.8;
+      max-width: 720px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 24px;
+      border-radius: 999px;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 18px 28px rgba(15, 75, 123, 0.18);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(15, 75, 123, 0.18);
+      color: var(--accent);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .hero-counters {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 12px;
+    }
+
+    .counter-card {
+      background: white;
+      border-radius: 22px;
+      padding: 24px;
+      border: 1px solid rgba(215, 222, 232, 0.9);
+      box-shadow: 0 18px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .counter-card h3 {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 0.96rem;
+      letter-spacing: 0.02em;
+    }
+
+    .counter-card p {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .sidebar {
+      display: grid;
+      gap: 18px;
+    }
+
+    .sidebar-card {
+      background: white;
+      border-radius: 22px;
+      padding: 28px;
+      border: 1px solid rgba(215, 222, 232, 0.9);
+      box-shadow: 0 18px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .sidebar-card h3 {
+      margin: 0 0 16px;
+      font-size: 1.05rem;
+      color: var(--accent);
+    }
+
+    .sidebar-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 0.98rem;
+    }
+
+    .sidebar-links {
+      margin-top: 22px;
+      display: grid;
+      gap: 12px;
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar-links a {
+      display: block;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: var(--surface-soft);
+      border: 1px solid rgba(15, 75, 123, 0.08);
+      font-weight: 600;
+      color: var(--primary);
+      transition: background 0.2s ease;
+    }
+
+    .sidebar-links a:hover {
+      background: rgba(15, 75, 123, 0.12);
+    }
+
+    main {
+      display: grid;
+      gap: 42px;
+      padding: 0 32px 36px;
+    }
+
+    .section {
+      display: grid;
+      gap: 18px;
+      padding: 0;
+    }
+
+    .section-title {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(215, 222, 232, 0.9);
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 1.6rem;
+      color: var(--accent);
+    }
+
+    .section-title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.75;
+      font-size: 1rem;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 28px;
+      border: 1px solid rgba(215, 222, 232, 0.9);
+      box-shadow: 0 22px 42px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 28px 50px rgba(15, 23, 42, 0.12);
+    }
+
+    .card-content {
+      padding: 30px;
+      min-height: 190px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      color: var(--accent);
+      line-height: 1.3;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 0.97rem;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: var(--accent-soft);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .card-meta span {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(15, 75, 123, 0.08);
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      padding: 26px 32px 32px;
+      border-top: 1px solid rgba(215, 222, 232, 0.9);
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+      .hero-counters {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 16px;
+      }
+      header {
+        padding: 0;
+      }
+      .topbar,
+      .hero,
+      main,
+      .footer {
+        padding: 0 18px 0;
+      }
+      .hero-card,
+      .sidebar-card {
+        padding: 24px;
+      }
+      .hero-actions {
+        flex-direction: column;
+      }
+      .stats-grid,
+      .aside-summary,
+      .grid-cards {
+        grid-template-columns: 1fr;
+      }
+      .section-title {
+        padding-bottom: 14px;
+      }
+      .section-title h2 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <h1>HUIT Learning Hub</h1>
+          <p>Trang chủ mới cho môn Hệ Quản Trị Cơ Sở Dữ Liệu, thiết kế như một dashboard học tập — trực quan, rõ ràng và chuẩn hoá theo chu trình học.</p>
+        </div>
+        <nav>
+          <ul class="nav-links">
+            <li><a href="#theory">Tài liệu</a></li>
+            <li><a href="#exercises">Bài tập</a></li>
+            <li><a href="#tests">Kiểm tra</a></li>
+            <li><a href="#lab">Phiếu</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="hero">
+        <div class="hero-panel">
+          <h2>Trang chủ đã được lột xác</h2>
+          <p>Dashboard học tập mới giúp phân chia nội dung rõ ràng giữa lý thuyết, bài tập, đề kiểm tra và phiếu thực hành. Mỗi tài nguyên được hiển thị dưới dạng thẻ riêng, dễ đọc và dễ thao tác.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#theory">Mở tài liệu học</a>
+            <a class="btn btn-secondary" href="#exercises">Bắt đầu bài tập</a>
+          </div>
+          <div class="hero-counters">
+            <div class="counter-card">
+              <h3>Chương tài liệu</h3>
+              <p>5</p>
+            </div>
+            <div class="counter-card">
+              <h3>Bài tập</h3>
+              <p>5</p>
+            </div>
+            <div class="counter-card">
+              <h3>Đề kiểm tra</h3>
+              <p>2</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="sidebar">
+          <div class="sidebar-card">
+            <h3>Khởi động nhanh</h3>
+            <p>Chọn mục học phù hợp với kế hoạch hiện tại của bạn: lý thuyết nền tảng, bài tập thực hành, đề kiểm tra ôn nhanh hoặc phiếu lab.</p>
+            <ul class="sidebar-links">
+              <li><a href="Tài liệu/Chuong 1_Tong quan ve he quan tri CSDL.pdf">Chương 1</a></li>
+              <li><a href="Bài tập/BaiTap5_1_TruyXuatDongThoi.html">Bài tập 5.1</a></li>
+              <li><a href="Kiểm tra/De1KiemTraChuong123.html">Đề kiểm tra 1</a></li>
+              <li><a href="Thực hành/phieuthuchanh_thhqtcsdl.html">Phiếu thực hành</a></li>
+            </ul>
+          </div>
+          <div class="sidebar-card">
+            <h3>Lời nhắc cho học tập</h3>
+            <p>Bắt đầu từ tài liệu rồi vào bài tập tương ứng để củng cố. Sau đó kiểm tra bằng đề thi và giảng lại bằng phiếu thực hành.</p>
+          </div>
+        </aside>
+      </div>
+    </header>
+
+    <main>
+      <section id="theory" class="section">
+        <div class="section-title">
+          <div>
+            <h2>Tài liệu học</h2>
+            <p>Danh sách 5 chương PDF giúp bạn nắm kỹ lý thuyết và hiểu rõ các chủ đề chính của môn học.</p>
+          </div>
+        </div>
+        <div class="grid-cards">
+          <article class="card">
+            <a class="card-content" href="Tài liệu/Chuong 1_Tong quan ve he quan tri CSDL.pdf">
+              <h3>Chương 1 — Tổng quan</h3>
+              <p>Giới thiệu cơ bản về Hệ Quản Trị Cơ Sở Dữ Liệu, kiến trúc và phân loại.</p>
+              <div class="card-meta"><span>PDF</span><span>Chương 1</span></div>
+            </a>
+          </article>
+          <article class="card">
+            <a class="card-content" href="Tài liệu/Chuong 2_Xay dung, quan ly va khai thac co so du lieu.pdf">
+              <h3>Chương 2 — Quản lý dữ liệu</h3>
+              <p>Nguyên lý thiết kế, tổ chức lưu trữ và khai thác cơ sở dữ liệu.</p>
+              <div class="card-meta"><span>PDF</span><span>Chương 2</span></div>
+            </a>
+          </article>
+          <article class="card">
+            <a class="card-content" href="Tài liệu/Chuong 3_Lap trinh co so du lieu bang T-SQL.pdf">
+              <h3>Chương 3 — T-SQL</h3>
+              <p>Hướng dẫn truy vấn, thủ tục, trigger và thao tác dữ liệu bằng T-SQL.</p>
+              <div class="card-meta"><span>PDF</span><span>Chương 3</span></div>
+            </a>
+          </article>
+          <article class="card">
+            <a class="card-content" href="Tài liệu/Chuong 4_Bao mat va an toan du lieu(update).pdf">
+              <h3>Chương 4 — Bảo mật</h3>
+              <p>Truy cập, phân quyền và bảo vệ dữ liệu trong hệ thống.</p>
+              <div class="card-meta"><span>PDF</span><span>Chương 4</span></div>
+            </a>
+          </article>
+          <article class="card">
+            <a class="card-content" href="Tài liệu/Chuong 5_Quan ly giao tac.pdf">
+              <h3>Chương 5 — Giao tác</h3>
+              <p>Các cấp độ cô lập, khóa và giải quyết xung đột giao dịch.</p>
+              <div class="card-meta"><span>PDF</span><span>Chương 5</span></div>
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <section id="exercises" class="section">
+        <div class="section-title">
+          <div>
+            <h2>Bài tập thực hành</h2>
+            <p>Nhóm bài tập giúp bạn luyện kỹ năng phân tích lịch trình, đánh giá tính tuần tự và xử lý giao tác.</p>
+          </div>
+        </div>
+        <div class="grid-cards">
+          <article class="card">
+            <a class="card-content" href="Bài tập/BaiTap5_1_TruyXuatDongThoi.html">
+              <h3>Bài tập 5.1</h3>
+              <p>Phân tích truy xuất đồng thời và đánh giá tính hợp lệ của lịch trình.</p>
+              <div class="card-meta"><span>Bài tập</span><span>Đồng thời</span></div>
+            </a>
+          </article>
+          <article class="card">
+            <a class="card-content" href="Bài tập/BaiTap5_2_KhaTuanTuXungDot.html">
+              <h3>Bài tập 5.2</h3>
+              <p>Đánh giá khả tuần tự dựa trên xung đột giữa các truy vấn.</p>
+              <div class="card-meta"><span>Bài tập</span><span>Xung đột</span></div>
+            </a>
+          </article>
+          <article class="card">
+            <a class="card-content" href="Bài tập/BaiTap5_3_KhaTuanTuView_Polygraph.html">
+              <h3>Bài tập 5.3</h3>
+              <p>Kiểm tra tương đương View và polygraph.</p>
+              <div class="card-meta"><span>Bài tập</span><span>View</span></div>
+            </a>
+          </article>
+          <article class="card">
+            <a class="card-content" href="Bài tập/BaiTap5_4_IsolationLevels_SQLServer.html">
+              <h3>Bài tập 5.4</h3>
+              <p>Minh hoạ các cấp độ isolation trong SQL Server.</p>
+              <div class="card-meta"><span>Bài tập</span><span>Isolation</span></div>
+            </a>
+          </article>
+          <article class="card">
+            <a class="card-content" href="Bài tập/BaiTap5_5_QuanLyBanHang_Solution.html">
+              <h3>Bài tập 5.5</h3>
+              <p>Giải pháp quản lý bán hàng với đồng bộ giao dịch.</p>
+              <div class="card-meta"><span>Bài tập</span><span>Giải pháp</span></div>
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <section id="tests" class="section">
+        <div class="section-title">
+          <div>
+            <h2>Đề kiểm tra</h2>
+            <p>Hai đề kiểm tra giúp bạn ôn lại chương 1-3 với các câu hỏi lý thuyết và bài tập T-SQL.</p>
+          </div>
+        </div>
+        <div class="grid-cards">
+          <article class="card">
+            <a class="card-content" href="Kiểm tra/De1KiemTraChuong123.html">
+              <h3>Đề kiểm tra 1</h3>
+              <p>Đề tổng hợp chương 1-3, phù hợp để luyện trước kiểm tra.</p>
+              <div class="card-meta"><span>Đề thi</span><span>Ôn luyện</span></div>
+            </a>
+          </article>
+          <article class="card">
+            <a class="card-content" href="Kiểm tra/De2KiemTraChuong123.html">
+              <h3>Đề kiểm tra 2</h3>
+              <p>Đề kiểm tra bổ sung để đối chiếu và kiểm sát kiến thức.</p>
+              <div class="card-meta"><span>Đề thi</span><span>Bổ sung</span></div>
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <section id="lab" class="section">
+        <div class="section-title">
+          <div>
+            <h2>Phiếu thực hành</h2>
+            <p>Phiếu thực hành hỗ trợ buổi lab và giúp bạn nắm nhanh phần thực hành CSDL.</p>
+          </div>
+        </div>
+        <div class="grid-cards">
+          <article class="card">
+            <a class="card-content" href="Thực hành/phieuthuchanh_thhqtcsdl.html">
+              <h3>Phiếu thực hành THHQT CSDL</h3>
+              <p>Nội dung phiếu thực hành dành riêng cho môn lab.</p>
+              <div class="card-meta"><span>Phiếu</span><span>Lab</span></div>
+            </a>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>Trang chủ đã chuyển sang giao diện dashboard học tập.</div>
+      <div>Biên tập OMG!</div>
+    </footer>
+  </div>
+</body>
+</html>
